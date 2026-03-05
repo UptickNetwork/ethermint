@@ -1,3 +1,18 @@
+// Copyright 2021 Evmos Foundation
+// This file is part of Evmos' Ethermint library.
+//
+// The Ethermint library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The Ethermint library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the Ethermint library. If not, see https://github.com/evmos/ethermint/blob/main/LICENSE
 package types
 
 import (
@@ -41,7 +56,8 @@ type TxData interface {
 	Fee() *big.Int
 	Cost() *big.Int
 
-	// effective fee according to current base fee
+	// effective gasPrice/fee/cost according to current base fee
+	EffectiveGasPrice(baseFee *big.Int) *big.Int
 	EffectiveFee(baseFee *big.Int) *big.Int
 	EffectiveCost(baseFee *big.Int) *big.Int
 }
@@ -70,8 +86,9 @@ func NewTxDataFromTx(tx *ethtypes.Transaction) (TxData, error) {
 //
 // CONTRACT: v value is either:
 //
-//  - {0,1} + CHAIN_ID * 2 + 35, if EIP155 is used
-//  - {0,1} + 27, otherwise
+//   - {0,1} + CHAIN_ID * 2 + 35, if EIP155 is used
+//   - {0,1} + 27, otherwise
+//
 // Ref: https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
 func DeriveChainID(v *big.Int) *big.Int {
 	if v == nil || v.Sign() < 1 {

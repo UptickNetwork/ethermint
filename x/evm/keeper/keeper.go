@@ -1,23 +1,42 @@
+// Package keeper Copyright 2021 Evmos Foundation
+// This file is part of Evmos' Ethermint library.
+//
+// The Ethermint library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The Ethermint library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the Ethermint library. If not, see https://github.com/evmos/ethermint/blob/main/LICENSE
 package keeper
 
 import (
+	"errors"
 	"math/big"
 
+	errorsmod "cosmossdk.io/errors"
+	"cosmossdk.io/log"
+	"cosmossdk.io/math"
+	"cosmossdk.io/store/prefix"
+	storetypes "cosmossdk.io/store/types"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/core/vm"
 	"github.com/ethereum/go-ethereum/params"
-	"github.com/tendermint/tendermint/libs/log"
 
 	ethermint "github.com/evmos/ethermint/types"
 	"github.com/evmos/ethermint/x/evm/statedb"
 	"github.com/evmos/ethermint/x/evm/types"
+	evm "github.com/evmos/ethermint/x/evm/vm"
 )
 
 // Keeper grants access to the EVM module state and implements the go-ethereum StateDB interface.
@@ -29,13 +48,13 @@ type Keeper struct {
 	// - storing account's Code
 	// - storing transaction Logs
 	// - storing Bloom filters by block height. Needed for the Web3 API.
-	storeKey sdk.StoreKey
+	storeKey storetypes.StoreKey
 
 	// key to access the transient store, which is reset on every block during Commit
-	transientKey sdk.StoreKey
+	transientKey storetypes.StoreKey
 
-	// module specific parameter space that can be configured through governance
-	paramSpace paramtypes.Subspace
+	// the address capable of executing a MsgUpdateParams message. Typically, this should be the x/gov module account.
+	authority sdk.AccAddress
 	// access to account state
 	accountKeeper types.AccountKeeper
 	// update balance and accounting operations with coins
@@ -53,37 +72,58 @@ type Keeper struct {
 
 	// EVM Hooks for tx post-processing
 	hooks types.EvmHooks
+
+	// custom stateless precompiled smart contracts
+	customPrecompiles evm.PrecompiledContracts
+
+	// evm constructor function
+	evmConstructor evm.Constructor
+	// Legacy subspace
+	ss paramstypes.Subspace
+
+	// options for the EVM
+	opts types.Options
 }
 
 // NewKeeper generates new evm module keeper
 func NewKeeper(
 	cdc codec.BinaryCodec,
-	storeKey, transientKey sdk.StoreKey, paramSpace paramtypes.Subspace,
-	ak types.AccountKeeper, bankKeeper types.BankKeeper, sk types.StakingKeeper,
+	storeKey, transientKey storetypes.StoreKey,
+	authority sdk.AccAddress,
+	ak types.AccountKeeper,
+	bankKeeper types.BankKeeper,
+	sk types.StakingKeeper,
 	fmk types.FeeMarketKeeper,
+	customPrecompiles evm.PrecompiledContracts,
+	evmConstructor evm.Constructor,
 	tracer string,
+	ss paramstypes.Subspace,
 ) *Keeper {
 	// ensure evm module account is set
 	if addr := ak.GetModuleAddress(types.ModuleName); addr == nil {
 		panic("the EVM module account has not been set")
 	}
 
-	// set KeyTable if it has not already been set
-	if !paramSpace.HasKeyTable() {
-		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
+	// ensure the authority account is correct
+	if err := sdk.VerifyAddressFormat(authority); err != nil {
+		panic(err)
 	}
 
 	// NOTE: we pass in the parameter space to the CommitStateDB in order to use custom denominations for the EVM operations
 	return &Keeper{
-		cdc:             cdc,
-		paramSpace:      paramSpace,
-		accountKeeper:   ak,
-		bankKeeper:      bankKeeper,
-		stakingKeeper:   sk,
-		feeMarketKeeper: fmk,
-		storeKey:        storeKey,
-		transientKey:    transientKey,
-		tracer:          tracer,
+		cdc:               cdc,
+		authority:         authority,
+		accountKeeper:     ak,
+		bankKeeper:        bankKeeper,
+		stakingKeeper:     sk,
+		feeMarketKeeper:   fmk,
+		storeKey:          storeKey,
+		transientKey:      transientKey,
+		customPrecompiles: customPrecompiles,
+		evmConstructor:    evmConstructor,
+		tracer:            tracer,
+		ss:                ss,
+		opts:              types.DefaultOptions(),
 	}
 }
 
@@ -92,18 +132,25 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", types.ModuleName)
 }
 
+// WithOptions sets the options to the keeper
+func (k *Keeper) WithOptions(opts types.Options) *Keeper {
+	k.opts = opts
+	return k
+}
+
 // WithChainID sets the chain id to the local variable in the keeper
-func (k *Keeper) WithChainID(ctx sdk.Context) {
+func (k *Keeper) WithChainID(ctx sdk.Context) error {
 	chainID, err := ethermint.ParseChainID(ctx.ChainID())
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	if k.eip155ChainID != nil && k.eip155ChainID.Cmp(chainID) != 0 {
-		panic("chain id already set")
+		return errors.New("chain id already set")
 	}
 
 	k.eip155ChainID = chainID
+	return nil
 }
 
 // ChainID returns the EIP155 chain ID for the EVM context
@@ -124,6 +171,11 @@ func (k Keeper) EmitBlockBloomEvent(ctx sdk.Context, bloom ethtypes.Bloom) {
 			sdk.NewAttribute(types.AttributeKeyEthereumBloom, string(bloom.Bytes())),
 		),
 	)
+}
+
+// GetAuthority returns the x/evm module authority address
+func (k Keeper) GetAuthority() sdk.AccAddress {
+	return k.authority
 }
 
 // GetBlockBloomTransient returns bloom bytes for the current block height
@@ -220,6 +272,11 @@ func (k *Keeper) SetHooks(eh types.EvmHooks) *Keeper {
 	return k
 }
 
+// Hooks return the hooks
+func (k *Keeper) Hooks() types.EvmHooks {
+	return k.hooks
+}
+
 // PostTxProcessing delegate the call to the hooks. If no hook has been registered, this function returns with a `nil` error
 func (k *Keeper) PostTxProcessing(ctx sdk.Context, msg core.Message, receipt *ethtypes.Receipt) error {
 	if k.hooks == nil {
@@ -282,8 +339,13 @@ func (k *Keeper) GetNonce(ctx sdk.Context, addr common.Address) uint64 {
 // GetBalance load account's balance of gas token
 func (k *Keeper) GetBalance(ctx sdk.Context, addr common.Address) *big.Int {
 	cosmosAddr := sdk.AccAddress(addr.Bytes())
-	params := k.GetParams(ctx)
-	coin := k.bankKeeper.GetBalance(ctx, cosmosAddr, params.EvmDenom)
+	evmParams := k.GetParams(ctx)
+	evmDenom := evmParams.GetEvmDenom()
+	// if node is pruned, params is empty. Return invalid value
+	if evmDenom == "" {
+		return big.NewInt(-1)
+	}
+	coin := k.bankKeeper.GetBalance(ctx, cosmosAddr, evmDenom)
 	return coin.Amount.BigInt()
 }
 
@@ -292,7 +354,11 @@ func (k *Keeper) GetBalance(ctx sdk.Context, addr common.Address) *big.Int {
 // - `0`: london hardfork enabled but feemarket is not enabled.
 // - `n`: both london hardfork and feemarket are enabled.
 func (k Keeper) GetBaseFee(ctx sdk.Context, ethCfg *params.ChainConfig) *big.Int {
-	if !types.IsLondon(ethCfg, ctx.BlockHeight()) {
+	return k.getBaseFee(ctx, types.IsLondon(ethCfg, ctx.BlockHeight()))
+}
+
+func (k Keeper) getBaseFee(ctx sdk.Context, london bool) *big.Int {
+	if !london {
 		return nil
 	}
 	baseFee := k.feeMarketKeeper.GetBaseFee(ctx)
@@ -304,8 +370,12 @@ func (k Keeper) GetBaseFee(ctx sdk.Context, ethCfg *params.ChainConfig) *big.Int
 }
 
 // GetMinGasMultiplier returns the MinGasMultiplier param from the fee market module
-func (k Keeper) GetMinGasMultiplier(ctx sdk.Context) sdk.Dec {
+func (k Keeper) GetMinGasMultiplier(ctx sdk.Context) math.LegacyDec {
 	fmkParmas := k.feeMarketKeeper.GetParams(ctx)
+	if fmkParmas.MinGasMultiplier.IsNil() {
+		// in case we are executing eth_call on a legacy block, returns a zero value.
+		return math.LegacyZeroDec()
+	}
 	return fmkParmas.MinGasMultiplier
 }
 
@@ -336,7 +406,7 @@ func (k Keeper) SetTransientGasUsed(ctx sdk.Context, gasUsed uint64) {
 func (k Keeper) AddTransientGasUsed(ctx sdk.Context, gasUsed uint64) (uint64, error) {
 	result := k.GetTransientGasUsed(ctx) + gasUsed
 	if result < gasUsed {
-		return 0, sdkerrors.Wrap(types.ErrGasOverflow, "transient gas used")
+		return 0, errorsmod.Wrap(types.ErrGasOverflow, "transient gas used")
 	}
 	k.SetTransientGasUsed(ctx, result)
 	return result, nil

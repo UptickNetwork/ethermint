@@ -1,9 +1,26 @@
+// Copyright 2021 Evmos Foundation
+// This file is part of Evmos' Ethermint library.
+//
+// The Ethermint library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The Ethermint library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the Ethermint library. If not, see https://github.com/evmos/ethermint/blob/main/LICENSE
 package cli
 
 import (
 	"bufio"
 	"fmt"
 	"os"
+
+	"github.com/ethereum/go-ethereum/common"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
@@ -15,6 +32,8 @@ import (
 	rpctypes "github.com/evmos/ethermint/rpc/types"
 	"github.com/evmos/ethermint/x/evm/types"
 )
+
+const flagEVMPayer = "evm-payer"
 
 // GetTxCmd returns the transaction commands for this module
 func GetTxCmd() *cobra.Command {
@@ -32,7 +51,7 @@ func GetTxCmd() *cobra.Command {
 // NewRawTxCmd command build cosmos transaction from raw ethereum transaction
 func NewRawTxCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "raw [tx-hex]",
+		Use:   "raw TX_HEX",
 		Short: "Build cosmos transaction from raw ethereum transaction",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -58,6 +77,17 @@ func NewRawTxCmd() *cobra.Command {
 			rsp, err := rpctypes.NewQueryClient(clientCtx).Params(cmd.Context(), &types.QueryParamsRequest{})
 			if err != nil {
 				return err
+			}
+
+			feePayerAddr, err := cmd.Flags().GetString(flagEVMPayer)
+			if err != nil {
+				return err
+			}
+			if len(feePayerAddr) > 0 {
+				if !common.IsHexAddress(feePayerAddr) {
+					return errors.New("feePayerAddr must be hex address")
+				}
+				msg.SetFeePayer(feePayerAddr)
 			}
 
 			tx, err := msg.BuildTx(clientCtx.TxConfig.NewTxBuilder(), rsp.Params.EvmDenom)
@@ -107,5 +137,6 @@ func NewRawTxCmd() *cobra.Command {
 	}
 
 	flags.AddTxFlagsToCmd(cmd)
+	cmd.Flags().String(flagEVMPayer, "", "Evm FeeGrant Account")
 	return cmd
 }

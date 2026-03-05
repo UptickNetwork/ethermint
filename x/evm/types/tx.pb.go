@@ -5,14 +5,15 @@ package types
 
 import (
 	context "context"
+	cosmossdk_io_math "cosmossdk.io/math"
 	encoding_binary "encoding/binary"
 	fmt "fmt"
+	_ "github.com/cosmos/cosmos-proto"
 	types "github.com/cosmos/cosmos-sdk/codec/types"
-	github_com_cosmos_cosmos_sdk_types "github.com/cosmos/cosmos-sdk/types"
-	_ "github.com/gogo/protobuf/gogoproto"
-	grpc1 "github.com/gogo/protobuf/grpc"
-	proto "github.com/gogo/protobuf/proto"
-	_ "github.com/regen-network/cosmos-proto"
+	_ "github.com/cosmos/cosmos-sdk/types/msgservice"
+	_ "github.com/cosmos/gogoproto/gogoproto"
+	grpc1 "github.com/cosmos/gogoproto/grpc"
+	proto "github.com/cosmos/gogoproto/proto"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
@@ -35,16 +36,18 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // MsgEthereumTx encapsulates an Ethereum transaction as an SDK message.
 type MsgEthereumTx struct {
-	// inner transaction data
+	// data is inner transaction data of the Ethereum transaction
 	Data *types.Any `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
-	// encoded storage size of the transaction
+	// size is the encoded storage size of the transaction (DEPRECATED)
 	Size_ float64 `protobuf:"fixed64,2,opt,name=size,proto3" json:"-"`
-	// transaction hash in hex format
+	// hash of the transaction in hex format
 	Hash string `protobuf:"bytes,3,opt,name=hash,proto3" json:"hash,omitempty" rlp:"-"`
-	// ethereum signer address in hex format. This address value is checked
+	// from is the ethereum signer address in hex format. This address value is checked
 	// against the address derived from the signature (V, R, S) using the
 	// secp256k1 elliptic curve
 	From string `protobuf:"bytes,4,opt,name=from,proto3" json:"from,omitempty"`
+	// support EVM transaction can use feegrant
+	FeePayer string `protobuf:"bytes,5,opt,name=fee_payer,json=feePayer,proto3" json:"fee_payer,omitempty"`
 }
 
 func (m *MsgEthereumTx) Reset()         { *m = MsgEthereumTx{} }
@@ -86,15 +89,15 @@ var xxx_messageInfo_MsgEthereumTx proto.InternalMessageInfo
 type LegacyTx struct {
 	// nonce corresponds to the account nonce (transaction sequence).
 	Nonce uint64 `protobuf:"varint,1,opt,name=nonce,proto3" json:"nonce,omitempty"`
-	// gas price defines the value for each gas unit
-	GasPrice *github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,2,opt,name=gas_price,json=gasPrice,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"gas_price,omitempty"`
+	// gas_price defines the value for each gas unit
+	GasPrice *cosmossdk_io_math.Int `protobuf:"bytes,2,opt,name=gas_price,json=gasPrice,proto3,customtype=cosmossdk.io/math.Int" json:"gas_price,omitempty"`
 	// gas defines the gas limit defined for the transaction.
 	GasLimit uint64 `protobuf:"varint,3,opt,name=gas,proto3" json:"gas,omitempty"`
-	// hex formatted address of the recipient
+	// to is the hex formatted address of the recipient
 	To string `protobuf:"bytes,4,opt,name=to,proto3" json:"to,omitempty"`
 	// value defines the unsigned integer value of the transaction amount.
-	Amount *github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,5,opt,name=value,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"value,omitempty"`
-	// input defines the data payload bytes of the transaction.
+	Amount *cosmossdk_io_math.Int `protobuf:"bytes,5,opt,name=value,proto3,customtype=cosmossdk.io/math.Int" json:"value,omitempty"`
+	// data is the data payload bytes of the transaction.
 	Data []byte `protobuf:"bytes,6,opt,name=data,proto3" json:"data,omitempty"`
 	// v defines the signature value
 	V []byte `protobuf:"bytes,7,opt,name=v,proto3" json:"v,omitempty"`
@@ -139,20 +142,21 @@ var xxx_messageInfo_LegacyTx proto.InternalMessageInfo
 
 // AccessListTx is the data of EIP-2930 access list transactions.
 type AccessListTx struct {
-	// destination EVM chain ID
-	ChainID *github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,1,opt,name=chain_id,json=chainId,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"chainID"`
+	// chain_id of the destination EVM chain
+	ChainID *cosmossdk_io_math.Int `protobuf:"bytes,1,opt,name=chain_id,json=chainId,proto3,customtype=cosmossdk.io/math.Int" json:"chainID"`
 	// nonce corresponds to the account nonce (transaction sequence).
 	Nonce uint64 `protobuf:"varint,2,opt,name=nonce,proto3" json:"nonce,omitempty"`
-	// gas price defines the value for each gas unit
-	GasPrice *github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,3,opt,name=gas_price,json=gasPrice,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"gas_price,omitempty"`
+	// gas_price defines the value for each gas unit
+	GasPrice *cosmossdk_io_math.Int `protobuf:"bytes,3,opt,name=gas_price,json=gasPrice,proto3,customtype=cosmossdk.io/math.Int" json:"gas_price,omitempty"`
 	// gas defines the gas limit defined for the transaction.
 	GasLimit uint64 `protobuf:"varint,4,opt,name=gas,proto3" json:"gas,omitempty"`
-	// hex formatted address of the recipient
+	// to is the recipient address in hex format
 	To string `protobuf:"bytes,5,opt,name=to,proto3" json:"to,omitempty"`
 	// value defines the unsigned integer value of the transaction amount.
-	Amount *github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,6,opt,name=value,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"value,omitempty"`
-	// input defines the data payload bytes of the transaction.
-	Data     []byte     `protobuf:"bytes,7,opt,name=data,proto3" json:"data,omitempty"`
+	Amount *cosmossdk_io_math.Int `protobuf:"bytes,6,opt,name=value,proto3,customtype=cosmossdk.io/math.Int" json:"value,omitempty"`
+	// data is the data payload bytes of the transaction.
+	Data []byte `protobuf:"bytes,7,opt,name=data,proto3" json:"data,omitempty"`
+	// accesses is an array of access tuples
 	Accesses AccessList `protobuf:"bytes,8,rep,name=accesses,proto3,castrepeated=AccessList" json:"accessList"`
 	// v defines the signature value
 	V []byte `protobuf:"bytes,9,opt,name=v,proto3" json:"v,omitempty"`
@@ -197,22 +201,23 @@ var xxx_messageInfo_AccessListTx proto.InternalMessageInfo
 
 // DynamicFeeTx is the data of EIP-1559 dinamic fee transactions.
 type DynamicFeeTx struct {
-	// destination EVM chain ID
-	ChainID *github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,1,opt,name=chain_id,json=chainId,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"chainID"`
+	// chain_id of the destination EVM chain
+	ChainID *cosmossdk_io_math.Int `protobuf:"bytes,1,opt,name=chain_id,json=chainId,proto3,customtype=cosmossdk.io/math.Int" json:"chainID"`
 	// nonce corresponds to the account nonce (transaction sequence).
 	Nonce uint64 `protobuf:"varint,2,opt,name=nonce,proto3" json:"nonce,omitempty"`
-	// gas tip cap defines the max value for the gas tip
-	GasTipCap *github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,3,opt,name=gas_tip_cap,json=gasTipCap,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"gas_tip_cap,omitempty"`
-	// gas fee cap defines the max value for the gas fee
-	GasFeeCap *github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,4,opt,name=gas_fee_cap,json=gasFeeCap,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"gas_fee_cap,omitempty"`
+	// gas_tip_cap defines the max value for the gas tip
+	GasTipCap *cosmossdk_io_math.Int `protobuf:"bytes,3,opt,name=gas_tip_cap,json=gasTipCap,proto3,customtype=cosmossdk.io/math.Int" json:"gas_tip_cap,omitempty"`
+	// gas_fee_cap defines the max value for the gas fee
+	GasFeeCap *cosmossdk_io_math.Int `protobuf:"bytes,4,opt,name=gas_fee_cap,json=gasFeeCap,proto3,customtype=cosmossdk.io/math.Int" json:"gas_fee_cap,omitempty"`
 	// gas defines the gas limit defined for the transaction.
 	GasLimit uint64 `protobuf:"varint,5,opt,name=gas,proto3" json:"gas,omitempty"`
-	// hex formatted address of the recipient
+	// to is the hex formatted address of the recipient
 	To string `protobuf:"bytes,6,opt,name=to,proto3" json:"to,omitempty"`
 	// value defines the the transaction amount.
-	Amount *github_com_cosmos_cosmos_sdk_types.Int `protobuf:"bytes,7,opt,name=value,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Int" json:"value,omitempty"`
-	// input defines the data payload bytes of the transaction.
-	Data     []byte     `protobuf:"bytes,8,opt,name=data,proto3" json:"data,omitempty"`
+	Amount *cosmossdk_io_math.Int `protobuf:"bytes,7,opt,name=value,proto3,customtype=cosmossdk.io/math.Int" json:"value,omitempty"`
+	// data is the data payload bytes of the transaction.
+	Data []byte `protobuf:"bytes,8,opt,name=data,proto3" json:"data,omitempty"`
+	// accesses is an array of access tuples
 	Accesses AccessList `protobuf:"bytes,9,rep,name=accesses,proto3,castrepeated=AccessList" json:"accessList"`
 	// v defines the signature value
 	V []byte `protobuf:"bytes,10,opt,name=v,proto3" json:"v,omitempty"`
@@ -255,6 +260,7 @@ func (m *DynamicFeeTx) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_DynamicFeeTx proto.InternalMessageInfo
 
+// ExtensionOptionsEthereumTx is an extension option for ethereum transactions
 type ExtensionOptionsEthereumTx struct {
 }
 
@@ -293,19 +299,19 @@ var xxx_messageInfo_ExtensionOptionsEthereumTx proto.InternalMessageInfo
 
 // MsgEthereumTxResponse defines the Msg/EthereumTx response type.
 type MsgEthereumTxResponse struct {
-	// ethereum transaction hash in hex format. This hash differs from the
+	// hash of the ethereum transaction in hex format. This hash differs from the
 	// Tendermint sha256 hash of the transaction bytes. See
-	// https://github.com/tendermint/tendermint/issues/6539 for reference
+	// https://github.com/cometbft/cometbft/issues/6539 for reference
 	Hash string `protobuf:"bytes,1,opt,name=hash,proto3" json:"hash,omitempty"`
 	// logs contains the transaction hash and the proto-compatible ethereum
 	// logs.
 	Logs []*Log `protobuf:"bytes,2,rep,name=logs,proto3" json:"logs,omitempty"`
-	// returned data from evm function (result or data supplied with revert
+	// ret is the returned data from evm function (result or data supplied with revert
 	// opcode)
 	Ret []byte `protobuf:"bytes,3,opt,name=ret,proto3" json:"ret,omitempty"`
-	// vm error is the error returned by vm execution
+	// vm_error is the error returned by vm execution
 	VmError string `protobuf:"bytes,4,opt,name=vm_error,json=vmError,proto3" json:"vm_error,omitempty"`
-	// gas consumed by the transaction
+	// gas_used specifies how much gas was consumed by the transaction
 	GasUsed uint64 `protobuf:"varint,5,opt,name=gas_used,json=gasUsed,proto3" json:"gas_used,omitempty"`
 }
 
@@ -342,6 +348,100 @@ func (m *MsgEthereumTxResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgEthereumTxResponse proto.InternalMessageInfo
 
+// MsgUpdateParams defines a Msg for updating the x/evm module parameters.
+type MsgUpdateParams struct {
+	// authority is the address of the governance account.
+	Authority string `protobuf:"bytes,1,opt,name=authority,proto3" json:"authority,omitempty"`
+	// params defines the x/evm parameters to update.
+	// NOTE: All parameters must be supplied.
+	Params Params `protobuf:"bytes,2,opt,name=params,proto3" json:"params"`
+}
+
+func (m *MsgUpdateParams) Reset()         { *m = MsgUpdateParams{} }
+func (m *MsgUpdateParams) String() string { return proto.CompactTextString(m) }
+func (*MsgUpdateParams) ProtoMessage()    {}
+func (*MsgUpdateParams) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f75ac0a12d075f21, []int{6}
+}
+func (m *MsgUpdateParams) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgUpdateParams) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgUpdateParams.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgUpdateParams) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgUpdateParams.Merge(m, src)
+}
+func (m *MsgUpdateParams) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgUpdateParams) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgUpdateParams.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgUpdateParams proto.InternalMessageInfo
+
+func (m *MsgUpdateParams) GetAuthority() string {
+	if m != nil {
+		return m.Authority
+	}
+	return ""
+}
+
+func (m *MsgUpdateParams) GetParams() Params {
+	if m != nil {
+		return m.Params
+	}
+	return Params{}
+}
+
+// MsgUpdateParamsResponse defines the response structure for executing a
+// MsgUpdateParams message.
+type MsgUpdateParamsResponse struct {
+}
+
+func (m *MsgUpdateParamsResponse) Reset()         { *m = MsgUpdateParamsResponse{} }
+func (m *MsgUpdateParamsResponse) String() string { return proto.CompactTextString(m) }
+func (*MsgUpdateParamsResponse) ProtoMessage()    {}
+func (*MsgUpdateParamsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f75ac0a12d075f21, []int{7}
+}
+func (m *MsgUpdateParamsResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MsgUpdateParamsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_MsgUpdateParamsResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *MsgUpdateParamsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MsgUpdateParamsResponse.Merge(m, src)
+}
+func (m *MsgUpdateParamsResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *MsgUpdateParamsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_MsgUpdateParamsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MsgUpdateParamsResponse proto.InternalMessageInfo
+
 func init() {
 	proto.RegisterType((*MsgEthereumTx)(nil), "ethermint.evm.v1.MsgEthereumTx")
 	proto.RegisterType((*LegacyTx)(nil), "ethermint.evm.v1.LegacyTx")
@@ -349,66 +449,76 @@ func init() {
 	proto.RegisterType((*DynamicFeeTx)(nil), "ethermint.evm.v1.DynamicFeeTx")
 	proto.RegisterType((*ExtensionOptionsEthereumTx)(nil), "ethermint.evm.v1.ExtensionOptionsEthereumTx")
 	proto.RegisterType((*MsgEthereumTxResponse)(nil), "ethermint.evm.v1.MsgEthereumTxResponse")
+	proto.RegisterType((*MsgUpdateParams)(nil), "ethermint.evm.v1.MsgUpdateParams")
+	proto.RegisterType((*MsgUpdateParamsResponse)(nil), "ethermint.evm.v1.MsgUpdateParamsResponse")
 }
 
 func init() { proto.RegisterFile("ethermint/evm/v1/tx.proto", fileDescriptor_f75ac0a12d075f21) }
 
 var fileDescriptor_f75ac0a12d075f21 = []byte{
-	// 851 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x55, 0x4f, 0x6f, 0xe3, 0x44,
-	0x14, 0xcf, 0x24, 0x4e, 0xec, 0x4c, 0xc2, 0x6a, 0x65, 0x75, 0x25, 0x27, 0x62, 0xe3, 0xc8, 0x12,
-	0x10, 0x90, 0x62, 0x6b, 0x0b, 0xa7, 0x9e, 0xb6, 0xd9, 0xfe, 0x51, 0xab, 0x54, 0x20, 0x2b, 0x5c,
-	0xe8, 0x21, 0x9a, 0x3a, 0x53, 0xc7, 0x22, 0xf6, 0x58, 0x9e, 0x89, 0xe5, 0x20, 0x71, 0x41, 0x1c,
-	0xb8, 0x81, 0xc4, 0x17, 0xe0, 0xc0, 0x89, 0x2b, 0x7c, 0x00, 0x8e, 0x3d, 0x56, 0x70, 0x41, 0x1c,
-	0x0c, 0x4a, 0x39, 0xf5, 0x06, 0x9f, 0x00, 0xcd, 0xd8, 0x69, 0x1a, 0xa2, 0x14, 0x28, 0x45, 0x7b,
-	0xca, 0x3c, 0xff, 0xde, 0xbc, 0x79, 0xef, 0xfd, 0x7e, 0x79, 0x0f, 0x36, 0x30, 0x1b, 0xe3, 0xc8,
-	0xf7, 0x02, 0x66, 0xe1, 0xd8, 0xb7, 0xe2, 0x67, 0x16, 0x4b, 0xcc, 0x30, 0x22, 0x8c, 0xa8, 0x8f,
-	0x6f, 0x20, 0x13, 0xc7, 0xbe, 0x19, 0x3f, 0x6b, 0x6e, 0xb9, 0xc4, 0x25, 0x02, 0xb4, 0xf8, 0x29,
-	0xf3, 0x6b, 0xbe, 0xea, 0x12, 0xe2, 0x4e, 0xb0, 0x85, 0x42, 0xcf, 0x42, 0x41, 0x40, 0x18, 0x62,
-	0x1e, 0x09, 0x68, 0x8e, 0x36, 0x72, 0x54, 0x58, 0x67, 0xd3, 0x73, 0x0b, 0x05, 0xb3, 0x05, 0xe4,
-	0x10, 0xea, 0x13, 0x3a, 0xcc, 0x22, 0x66, 0x46, 0x0e, 0x35, 0xd7, 0xd2, 0xe2, 0x29, 0x08, 0xcc,
-	0xf8, 0x1c, 0xc0, 0x57, 0x4e, 0xa8, 0xbb, 0xcf, 0x3d, 0xf0, 0xd4, 0x1f, 0x24, 0x6a, 0x07, 0x4a,
-	0x23, 0xc4, 0x90, 0x06, 0xda, 0xa0, 0x53, 0xdb, 0xde, 0x32, 0xb3, 0x27, 0xcd, 0xc5, 0x93, 0xe6,
-	0x6e, 0x30, 0xb3, 0x85, 0x87, 0xda, 0x80, 0x12, 0xf5, 0x3e, 0xc2, 0x5a, 0xb1, 0x0d, 0x3a, 0xa0,
-	0x57, 0xbe, 0x4e, 0x75, 0xd0, 0xb5, 0xc5, 0x27, 0x55, 0x87, 0xd2, 0x18, 0xd1, 0xb1, 0x56, 0x6a,
-	0x83, 0x4e, 0xb5, 0x57, 0xfb, 0x23, 0xd5, 0xe5, 0x68, 0x12, 0xee, 0x18, 0x5d, 0xc3, 0x16, 0x80,
-	0xaa, 0x42, 0xe9, 0x3c, 0x22, 0xbe, 0x26, 0x71, 0x07, 0x5b, 0x9c, 0x77, 0xa4, 0xcf, 0xbe, 0xd2,
-	0x0b, 0xc6, 0xb7, 0x45, 0xa8, 0xf4, 0xb1, 0x8b, 0x9c, 0xd9, 0x20, 0x51, 0xb7, 0x60, 0x39, 0x20,
-	0x81, 0x83, 0x45, 0x36, 0x92, 0x9d, 0x19, 0xea, 0x21, 0xac, 0xba, 0x88, 0x97, 0xea, 0x39, 0xd9,
-	0xeb, 0xd5, 0xde, 0x5b, 0x3f, 0xa7, 0xfa, 0xeb, 0xae, 0xc7, 0xc6, 0xd3, 0x33, 0xd3, 0x21, 0x7e,
-	0xde, 0x80, 0xfc, 0xa7, 0x4b, 0x47, 0x1f, 0x5a, 0x6c, 0x16, 0x62, 0x6a, 0x1e, 0x05, 0xcc, 0x56,
-	0x5c, 0x44, 0xdf, 0xe3, 0x77, 0xd5, 0x16, 0x2c, 0xb9, 0x88, 0x8a, 0x2c, 0xa5, 0x5e, 0x7d, 0x9e,
-	0xea, 0xca, 0x21, 0xa2, 0x7d, 0xcf, 0xf7, 0x98, 0xcd, 0x01, 0xf5, 0x11, 0x2c, 0x32, 0x92, 0xe7,
-	0x58, 0x64, 0x44, 0x3d, 0x86, 0xe5, 0x18, 0x4d, 0xa6, 0x58, 0x2b, 0x8b, 0x47, 0xdf, 0xf9, 0xe7,
-	0x8f, 0xce, 0x53, 0xbd, 0xb2, 0xeb, 0x93, 0x69, 0xc0, 0xec, 0x2c, 0x04, 0xef, 0x80, 0xe8, 0x73,
-	0xa5, 0x0d, 0x3a, 0xf5, 0xbc, 0xa3, 0x75, 0x08, 0x62, 0x4d, 0x16, 0x1f, 0x40, 0xcc, 0xad, 0x48,
-	0x53, 0x32, 0x2b, 0xe2, 0x16, 0xd5, 0xaa, 0x99, 0x45, 0x77, 0x1e, 0xf1, 0x5e, 0xfd, 0xf0, 0x5d,
-	0xb7, 0x32, 0x48, 0xf6, 0x10, 0x43, 0xc6, 0xef, 0x25, 0x58, 0xdf, 0x75, 0x1c, 0x4c, 0x69, 0xdf,
-	0xa3, 0x6c, 0x90, 0xa8, 0xa7, 0x50, 0x71, 0xc6, 0xc8, 0x0b, 0x86, 0xde, 0x48, 0x34, 0xaf, 0xda,
-	0x7b, 0xfe, 0xaf, 0xb2, 0x95, 0x5f, 0xf0, 0xdb, 0x47, 0x7b, 0xd7, 0xa9, 0x2e, 0x3b, 0xd9, 0xd1,
-	0xce, 0x0f, 0xa3, 0x25, 0x2d, 0xc5, 0x8d, 0xb4, 0x94, 0xfe, 0x3b, 0x2d, 0xd2, 0xdd, 0xb4, 0x94,
-	0xd7, 0x69, 0xa9, 0x3c, 0x1c, 0x2d, 0xf2, 0x2d, 0x5a, 0x4e, 0xa1, 0x82, 0x44, 0x6f, 0x31, 0xd5,
-	0x94, 0x76, 0xa9, 0x53, 0xdb, 0x7e, 0x6a, 0xfe, 0xf5, 0xff, 0x6c, 0x66, 0xdd, 0x1f, 0x4c, 0xc3,
-	0x09, 0xee, 0xb5, 0x2f, 0x52, 0xbd, 0x70, 0x9d, 0xea, 0x10, 0xdd, 0x50, 0xf2, 0xcd, 0x2f, 0x3a,
-	0x5c, 0x12, 0x64, 0xdf, 0x04, 0xcc, 0x38, 0xaf, 0xae, 0x70, 0x0e, 0x57, 0x38, 0xaf, 0x6d, 0xe2,
-	0xfc, 0x7b, 0x09, 0xd6, 0xf7, 0x66, 0x01, 0xf2, 0x3d, 0xe7, 0x00, 0xe3, 0x97, 0xc3, 0xf9, 0x31,
-	0xac, 0x71, 0xce, 0x99, 0x17, 0x0e, 0x1d, 0x14, 0xde, 0x83, 0x75, 0x2e, 0x99, 0x81, 0x17, 0xbe,
-	0x40, 0xe1, 0x22, 0xd6, 0x39, 0xc6, 0x22, 0x96, 0x74, 0xaf, 0x58, 0x07, 0x18, 0xf3, 0x58, 0xb9,
-	0x84, 0xca, 0x77, 0x4b, 0xa8, 0xb2, 0x2e, 0x21, 0xf9, 0xe1, 0x24, 0xa4, 0x6c, 0x90, 0x50, 0xf5,
-	0x7f, 0x91, 0x10, 0x5c, 0x91, 0x50, 0x6d, 0x45, 0x42, 0xf5, 0x4d, 0x12, 0x32, 0x60, 0x73, 0x3f,
-	0x61, 0x38, 0xa0, 0x1e, 0x09, 0xde, 0x0d, 0xc5, 0xaa, 0x59, 0xae, 0x82, 0x7c, 0x20, 0x7f, 0x0d,
-	0xe0, 0x93, 0x95, 0x15, 0x61, 0x63, 0x1a, 0x92, 0x80, 0x8a, 0x42, 0xc5, 0x94, 0x07, 0xd9, 0x10,
-	0x17, 0x83, 0xfd, 0x4d, 0x28, 0x4d, 0x88, 0x4b, 0xb5, 0xa2, 0x28, 0xf2, 0xc9, 0x7a, 0x91, 0x7d,
-	0xe2, 0xda, 0xc2, 0x45, 0x7d, 0x0c, 0x4b, 0x11, 0x66, 0x42, 0x33, 0x75, 0x9b, 0x1f, 0xd5, 0x06,
-	0x54, 0x62, 0x7f, 0x88, 0xa3, 0x88, 0x44, 0xf9, 0xd4, 0x95, 0x63, 0x7f, 0x9f, 0x9b, 0x1c, 0xe2,
-	0xe2, 0x98, 0x52, 0x3c, 0xca, 0x58, 0xb5, 0x65, 0x17, 0xd1, 0xf7, 0x29, 0x1e, 0x65, 0x69, 0x6e,
-	0x7f, 0x0a, 0x60, 0xe9, 0x84, 0xba, 0xea, 0xc7, 0x10, 0xde, 0xda, 0x66, 0xfa, 0x7a, 0x02, 0x2b,
-	0xb5, 0x34, 0xdf, 0xf8, 0x1b, 0x87, 0x45, 0xb1, 0xc6, 0x6b, 0x9f, 0xfc, 0xf8, 0xdb, 0x97, 0x45,
-	0xdd, 0x78, 0x6a, 0xad, 0xaf, 0xd3, 0xdc, 0x7b, 0xc8, 0x92, 0xde, 0xf3, 0x8b, 0x79, 0x0b, 0x5c,
-	0xce, 0x5b, 0xe0, 0xd7, 0x79, 0x0b, 0x7c, 0x71, 0xd5, 0x2a, 0x5c, 0x5e, 0xb5, 0x0a, 0x3f, 0x5d,
-	0xb5, 0x0a, 0x1f, 0xdc, 0xd6, 0x13, 0x8e, 0xb9, 0x9c, 0x96, 0x81, 0x12, 0x11, 0x4a, 0x68, 0xea,
-	0xac, 0x22, 0x56, 0xed, 0xdb, 0x7f, 0x06, 0x00, 0x00, 0xff, 0xff, 0x9e, 0x31, 0x9d, 0x29, 0x4e,
-	0x08, 0x00, 0x00,
+	// 988 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xbc, 0x56, 0x41, 0x6f, 0x1b, 0x45,
+	0x14, 0xf6, 0xda, 0x6b, 0x7b, 0x3d, 0x36, 0xa1, 0x5a, 0x25, 0xea, 0xda, 0x50, 0xaf, 0x31, 0x02,
+	0xdc, 0x4a, 0xd9, 0x55, 0x83, 0x54, 0xa9, 0x39, 0x11, 0x37, 0x29, 0x2a, 0x4a, 0x44, 0xb4, 0xb8,
+	0x17, 0x40, 0xb2, 0x26, 0xeb, 0xc9, 0x78, 0x84, 0x77, 0x67, 0xb5, 0x33, 0x5e, 0xd9, 0x48, 0x48,
+	0xa8, 0x27, 0x8e, 0x20, 0xfe, 0x00, 0x07, 0x4e, 0x88, 0x43, 0x0f, 0x3d, 0x73, 0xae, 0x38, 0x55,
+	0x70, 0x41, 0x1c, 0x0c, 0x72, 0x90, 0x2a, 0x72, 0xe4, 0xcc, 0x01, 0xcd, 0xcc, 0x3a, 0x8e, 0x6b,
+	0x9c, 0x40, 0x25, 0xb8, 0xcd, 0xdb, 0xf7, 0xbd, 0x37, 0xdf, 0x7c, 0xdf, 0xf8, 0x8d, 0x41, 0x15,
+	0xf1, 0x3e, 0x8a, 0x03, 0x12, 0x72, 0x17, 0x25, 0x81, 0x9b, 0xdc, 0x74, 0xf9, 0xc8, 0x89, 0x62,
+	0xca, 0xa9, 0x79, 0xe5, 0x2c, 0xe5, 0xa0, 0x24, 0x70, 0x92, 0x9b, 0xb5, 0xab, 0x3e, 0x65, 0x01,
+	0x65, 0x6e, 0xc0, 0xb0, 0x40, 0x06, 0x0c, 0x2b, 0x68, 0xad, 0xaa, 0x12, 0x5d, 0x19, 0xb9, 0x2a,
+	0x48, 0x53, 0xb5, 0xa5, 0x0d, 0x44, 0x33, 0x95, 0x5b, 0xc7, 0x14, 0x53, 0x55, 0x23, 0x56, 0xe9,
+	0xd7, 0x97, 0x31, 0xa5, 0x78, 0x80, 0x5c, 0x18, 0x11, 0x17, 0x86, 0x21, 0xe5, 0x90, 0x13, 0x1a,
+	0xce, 0xfa, 0x55, 0xd3, 0xac, 0x8c, 0x8e, 0x86, 0xc7, 0x2e, 0x0c, 0xc7, 0x2a, 0xd5, 0xfc, 0x56,
+	0x03, 0x2f, 0x1c, 0x30, 0xbc, 0x27, 0x36, 0x44, 0xc3, 0xa0, 0x33, 0x32, 0x5b, 0x40, 0xef, 0x41,
+	0x0e, 0x2d, 0xad, 0xa1, 0xb5, 0xca, 0x5b, 0xeb, 0x8e, 0xaa, 0x75, 0x66, 0xb5, 0xce, 0x4e, 0x38,
+	0xf6, 0x24, 0xc2, 0xac, 0x02, 0x9d, 0x91, 0x8f, 0x91, 0x95, 0x6d, 0x68, 0x2d, 0xad, 0x9d, 0x3f,
+	0x9d, 0xd8, 0xda, 0xa6, 0x27, 0x3f, 0x99, 0x36, 0xd0, 0xfb, 0x90, 0xf5, 0xad, 0x5c, 0x43, 0x6b,
+	0x95, 0xda, 0xe5, 0x3f, 0x26, 0x76, 0x31, 0x1e, 0x44, 0xdb, 0xcd, 0xcd, 0xa6, 0x27, 0x13, 0xa6,
+	0x09, 0xf4, 0xe3, 0x98, 0x06, 0x96, 0x2e, 0x00, 0x9e, 0x5c, 0x9b, 0x2f, 0x81, 0xd2, 0x31, 0x42,
+	0xdd, 0x08, 0x8e, 0x51, 0x6c, 0xe5, 0x65, 0xc2, 0x38, 0x46, 0xe8, 0x50, 0xc4, 0xdb, 0xfa, 0x67,
+	0x5f, 0xd9, 0x99, 0xe6, 0x17, 0x59, 0x60, 0xec, 0x23, 0x0c, 0xfd, 0x71, 0x67, 0x64, 0xae, 0x83,
+	0x7c, 0x48, 0x43, 0x1f, 0x49, 0xaa, 0xba, 0xa7, 0x02, 0xf3, 0x16, 0x28, 0x61, 0x28, 0x64, 0x25,
+	0xbe, 0xa2, 0x56, 0x6a, 0x57, 0x7f, 0x9e, 0xd8, 0x1b, 0x4a, 0x61, 0xd6, 0xfb, 0xc8, 0x21, 0xd4,
+	0x0d, 0x20, 0xef, 0x3b, 0xf7, 0x42, 0xee, 0x19, 0x18, 0xb2, 0x43, 0x01, 0x35, 0xeb, 0x20, 0x87,
+	0x21, 0x93, 0x8c, 0xf5, 0x76, 0x65, 0x3a, 0xb1, 0x8d, 0xb7, 0x21, 0xdb, 0x27, 0x01, 0xe1, 0x9e,
+	0x48, 0x98, 0x6b, 0x20, 0xcb, 0x69, 0xca, 0x37, 0xcb, 0xa9, 0x79, 0x1b, 0xe4, 0x13, 0x38, 0x18,
+	0x22, 0xc5, 0xb4, 0xfd, 0xea, 0xca, 0x3d, 0xa6, 0x13, 0xbb, 0xb0, 0x13, 0xd0, 0x61, 0xc8, 0x3d,
+	0x55, 0x21, 0x0e, 0x2f, 0x25, 0x2e, 0x34, 0xb4, 0x56, 0x25, 0x15, 0xb3, 0x02, 0xb4, 0xc4, 0x2a,
+	0xca, 0x0f, 0x5a, 0x22, 0xa2, 0xd8, 0x32, 0x54, 0x14, 0x8b, 0x88, 0x59, 0x25, 0x15, 0xb1, 0xed,
+	0x35, 0xa1, 0xc4, 0xf7, 0x8f, 0x36, 0x0b, 0x9d, 0xd1, 0x2e, 0xe4, 0xb0, 0xf9, 0x5d, 0x0e, 0x54,
+	0x76, 0x7c, 0x1f, 0x31, 0xb6, 0x4f, 0x18, 0xef, 0x8c, 0xcc, 0x77, 0x80, 0xe1, 0xf7, 0x21, 0x09,
+	0xbb, 0xa4, 0x27, 0xa5, 0x29, 0xb5, 0xdd, 0x8b, 0xc8, 0x15, 0xef, 0x08, 0xf0, 0xbd, 0xdd, 0xd3,
+	0x89, 0x5d, 0xf4, 0xd5, 0xd2, 0x4b, 0x17, 0xbd, 0xb9, 0xc6, 0xd9, 0x95, 0x1a, 0xe7, 0xfe, 0xb5,
+	0xc6, 0xfa, 0xc5, 0x1a, 0xe7, 0x97, 0x35, 0x2e, 0x3c, 0xb7, 0xc6, 0xc5, 0x73, 0x1a, 0x7f, 0x00,
+	0x0c, 0x28, 0x85, 0x42, 0xcc, 0x32, 0x1a, 0xb9, 0x56, 0x79, 0xeb, 0x9a, 0xf3, 0xec, 0x0f, 0xd6,
+	0x51, 0x52, 0x76, 0x86, 0xd1, 0x00, 0xb5, 0x1b, 0x8f, 0x27, 0x76, 0xe6, 0x74, 0x62, 0x03, 0x78,
+	0xa6, 0xef, 0x37, 0xbf, 0xd8, 0x60, 0xae, 0xb6, 0x77, 0xd6, 0x50, 0x19, 0x58, 0x5a, 0x30, 0x10,
+	0x2c, 0x18, 0x58, 0x5e, 0x65, 0xe0, 0x9f, 0x39, 0x50, 0xd9, 0x1d, 0x87, 0x30, 0x20, 0xfe, 0x5d,
+	0x84, 0xfe, 0x17, 0x03, 0x6f, 0x83, 0xb2, 0x30, 0x90, 0x93, 0xa8, 0xeb, 0xc3, 0xe8, 0x72, 0x0b,
+	0x85, 0xdd, 0x1d, 0x12, 0xdd, 0x81, 0xd1, 0xac, 0x54, 0xfc, 0x52, 0x45, 0xa9, 0xfe, 0x4f, 0x4a,
+	0xef, 0x22, 0x24, 0x4a, 0x53, 0xfb, 0xf3, 0x17, 0xdb, 0x5f, 0x58, 0xb6, 0xbf, 0xf8, 0xdc, 0xf6,
+	0x1b, 0x2b, 0xec, 0x2f, 0xfd, 0x27, 0xf6, 0x83, 0x05, 0xfb, 0xcb, 0x0b, 0xf6, 0x57, 0x56, 0xd9,
+	0xdf, 0x04, 0xb5, 0xbd, 0x11, 0x47, 0x21, 0x23, 0x34, 0x7c, 0x37, 0x92, 0x73, 0x7b, 0x3e, 0x8e,
+	0xd3, 0xb9, 0xf7, 0xb5, 0x06, 0x36, 0x16, 0xc6, 0xb4, 0x87, 0x58, 0x44, 0x43, 0x26, 0x0f, 0x2a,
+	0x27, 0xad, 0xa6, 0x06, 0xa9, 0x1c, 0xae, 0xd7, 0x81, 0x3e, 0xa0, 0x98, 0x59, 0x59, 0x79, 0xc8,
+	0x8d, 0xe5, 0x43, 0xee, 0x53, 0xec, 0x49, 0x88, 0x79, 0x05, 0xe4, 0x62, 0xc4, 0xe5, 0x05, 0xa8,
+	0x78, 0x62, 0x69, 0x56, 0x81, 0x91, 0x04, 0x5d, 0x14, 0xc7, 0x34, 0x4e, 0xa7, 0x5d, 0x31, 0x09,
+	0xf6, 0x44, 0x28, 0x52, 0xc2, 0xfa, 0x21, 0x43, 0x3d, 0x65, 0xa2, 0x57, 0xc4, 0x90, 0xdd, 0x67,
+	0xa8, 0x37, 0x1b, 0xcf, 0x1a, 0x78, 0xf1, 0x80, 0xe1, 0xfb, 0x51, 0x0f, 0x72, 0x74, 0x08, 0x63,
+	0x18, 0x30, 0x31, 0x2b, 0xe0, 0x90, 0xf7, 0x69, 0x4c, 0xf8, 0x38, 0xbd, 0xcd, 0xd6, 0x0f, 0x8f,
+	0x36, 0xd7, 0xd3, 0x17, 0x6f, 0xa7, 0xd7, 0x8b, 0x11, 0x63, 0xef, 0xf1, 0x98, 0x84, 0xd8, 0x9b,
+	0x43, 0xcd, 0x5b, 0xa0, 0x10, 0xc9, 0x0e, 0xf2, 0xe6, 0x96, 0xb7, 0xac, 0xe5, 0x63, 0xa8, 0x1d,
+	0xda, 0xba, 0xb0, 0xc9, 0x4b, 0xd1, 0xdb, 0x6b, 0x0f, 0x9e, 0x3e, 0xbc, 0x31, 0xef, 0xd3, 0xac,
+	0x82, 0xab, 0xcf, 0x50, 0x9a, 0x69, 0xb7, 0xf5, 0xbb, 0x06, 0x72, 0x07, 0x0c, 0x9b, 0x9f, 0x00,
+	0x70, 0xee, 0x01, 0xb4, 0x97, 0x37, 0x5a, 0x90, 0xbe, 0xf6, 0xc6, 0x25, 0x80, 0x59, 0xff, 0xe6,
+	0x6b, 0x0f, 0x7e, 0xfc, 0xed, 0xcb, 0xac, 0xdd, 0xbc, 0xe6, 0x2e, 0x3f, 0xe8, 0x29, 0xba, 0xcb,
+	0x47, 0xe6, 0x87, 0xa0, 0xb2, 0xa0, 0xd8, 0x2b, 0x7f, 0xdb, 0xff, 0x3c, 0xa4, 0x76, 0xfd, 0x52,
+	0xc8, 0x8c, 0x44, 0x2d, 0xff, 0xe9, 0xd3, 0x87, 0x37, 0xb4, 0xf6, 0x5b, 0x8f, 0xa7, 0x75, 0xed,
+	0xc9, 0xb4, 0xae, 0xfd, 0x3a, 0xad, 0x6b, 0x9f, 0x9f, 0xd4, 0x33, 0x4f, 0x4e, 0xea, 0x99, 0x9f,
+	0x4e, 0xea, 0x99, 0xf7, 0x5f, 0xc7, 0x84, 0xf7, 0x87, 0x47, 0x8e, 0x4f, 0x03, 0xc1, 0x8e, 0xb2,
+	0x73, 0x6c, 0x47, 0x92, 0x2f, 0x1f, 0x47, 0x88, 0x1d, 0x15, 0xe4, 0x5f, 0x80, 0x37, 0xff, 0x0a,
+	0x00, 0x00, 0xff, 0xff, 0xfe, 0xe2, 0x6d, 0x80, 0xff, 0x08, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -425,6 +535,9 @@ const _ = grpc.SupportPackageIsVersion4
 type MsgClient interface {
 	// EthereumTx defines a method submitting Ethereum transactions.
 	EthereumTx(ctx context.Context, in *MsgEthereumTx, opts ...grpc.CallOption) (*MsgEthereumTxResponse, error)
+	// UpdateParams defined a governance operation for updating the x/evm module parameters.
+	// The authority is hard-coded to the Cosmos SDK x/gov module account
+	UpdateParams(ctx context.Context, in *MsgUpdateParams, opts ...grpc.CallOption) (*MsgUpdateParamsResponse, error)
 }
 
 type msgClient struct {
@@ -444,10 +557,22 @@ func (c *msgClient) EthereumTx(ctx context.Context, in *MsgEthereumTx, opts ...g
 	return out, nil
 }
 
+func (c *msgClient) UpdateParams(ctx context.Context, in *MsgUpdateParams, opts ...grpc.CallOption) (*MsgUpdateParamsResponse, error) {
+	out := new(MsgUpdateParamsResponse)
+	err := c.cc.Invoke(ctx, "/ethermint.evm.v1.Msg/UpdateParams", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
 	// EthereumTx defines a method submitting Ethereum transactions.
 	EthereumTx(context.Context, *MsgEthereumTx) (*MsgEthereumTxResponse, error)
+	// UpdateParams defined a governance operation for updating the x/evm module parameters.
+	// The authority is hard-coded to the Cosmos SDK x/gov module account
+	UpdateParams(context.Context, *MsgUpdateParams) (*MsgUpdateParamsResponse, error)
 }
 
 // UnimplementedMsgServer can be embedded to have forward compatible implementations.
@@ -456,6 +581,9 @@ type UnimplementedMsgServer struct {
 
 func (*UnimplementedMsgServer) EthereumTx(ctx context.Context, req *MsgEthereumTx) (*MsgEthereumTxResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EthereumTx not implemented")
+}
+func (*UnimplementedMsgServer) UpdateParams(ctx context.Context, req *MsgUpdateParams) (*MsgUpdateParamsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateParams not implemented")
 }
 
 func RegisterMsgServer(s grpc1.Server, srv MsgServer) {
@@ -480,6 +608,24 @@ func _Msg_EthereumTx_Handler(srv interface{}, ctx context.Context, dec func(inte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_UpdateParams_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgUpdateParams)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).UpdateParams(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ethermint.evm.v1.Msg/UpdateParams",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).UpdateParams(ctx, req.(*MsgUpdateParams))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Msg_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "ethermint.evm.v1.Msg",
 	HandlerType: (*MsgServer)(nil),
@@ -487,6 +633,10 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "EthereumTx",
 			Handler:    _Msg_EthereumTx_Handler,
+		},
+		{
+			MethodName: "UpdateParams",
+			Handler:    _Msg_UpdateParams_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -513,6 +663,13 @@ func (m *MsgEthereumTx) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if len(m.FeePayer) > 0 {
+		i -= len(m.FeePayer)
+		copy(dAtA[i:], m.FeePayer)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.FeePayer)))
+		i--
+		dAtA[i] = 0x2a
+	}
 	if len(m.From) > 0 {
 		i -= len(m.From)
 		copy(dAtA[i:], m.From)
@@ -974,6 +1131,69 @@ func (m *MsgEthereumTxResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *MsgUpdateParams) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgUpdateParams) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgUpdateParams) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.Params.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintTx(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x12
+	if len(m.Authority) > 0 {
+		i -= len(m.Authority)
+		copy(dAtA[i:], m.Authority)
+		i = encodeVarintTx(dAtA, i, uint64(len(m.Authority)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MsgUpdateParamsResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MsgUpdateParamsResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MsgUpdateParamsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
 	offset -= sovTx(v)
 	base := offset
@@ -1003,6 +1223,10 @@ func (m *MsgEthereumTx) Size() (n int) {
 		n += 1 + l + sovTx(uint64(l))
 	}
 	l = len(m.From)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = len(m.FeePayer)
 	if l > 0 {
 		n += 1 + l + sovTx(uint64(l))
 	}
@@ -1201,6 +1425,30 @@ func (m *MsgEthereumTxResponse) Size() (n int) {
 	return n
 }
 
+func (m *MsgUpdateParams) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Authority)
+	if l > 0 {
+		n += 1 + l + sovTx(uint64(l))
+	}
+	l = m.Params.Size()
+	n += 1 + l + sovTx(uint64(l))
+	return n
+}
+
+func (m *MsgUpdateParamsResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
 func sovTx(x uint64) (n int) {
 	return (math_bits.Len64(x|1) + 6) / 7
 }
@@ -1347,6 +1595,38 @@ func (m *MsgEthereumTx) Unmarshal(dAtA []byte) error {
 			}
 			m.From = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field FeePayer", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.FeePayer = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipTx(dAtA[iNdEx:])
@@ -1446,7 +1726,7 @@ func (m *LegacyTx) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			var v github_com_cosmos_cosmos_sdk_types.Int
+			var v cosmossdk_io_math.Int
 			m.GasPrice = &v
 			if err := m.GasPrice.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -1533,7 +1813,7 @@ func (m *LegacyTx) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			var v github_com_cosmos_cosmos_sdk_types.Int
+			var v cosmossdk_io_math.Int
 			m.Amount = &v
 			if err := m.Amount.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -1755,7 +2035,7 @@ func (m *AccessListTx) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			var v github_com_cosmos_cosmos_sdk_types.Int
+			var v cosmossdk_io_math.Int
 			m.ChainID = &v
 			if err := m.ChainID.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -1810,7 +2090,7 @@ func (m *AccessListTx) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			var v github_com_cosmos_cosmos_sdk_types.Int
+			var v cosmossdk_io_math.Int
 			m.GasPrice = &v
 			if err := m.GasPrice.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -1897,7 +2177,7 @@ func (m *AccessListTx) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			var v github_com_cosmos_cosmos_sdk_types.Int
+			var v cosmossdk_io_math.Int
 			m.Amount = &v
 			if err := m.Amount.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -2153,7 +2433,7 @@ func (m *DynamicFeeTx) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			var v github_com_cosmos_cosmos_sdk_types.Int
+			var v cosmossdk_io_math.Int
 			m.ChainID = &v
 			if err := m.ChainID.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -2208,7 +2488,7 @@ func (m *DynamicFeeTx) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			var v github_com_cosmos_cosmos_sdk_types.Int
+			var v cosmossdk_io_math.Int
 			m.GasTipCap = &v
 			if err := m.GasTipCap.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -2244,7 +2524,7 @@ func (m *DynamicFeeTx) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			var v github_com_cosmos_cosmos_sdk_types.Int
+			var v cosmossdk_io_math.Int
 			m.GasFeeCap = &v
 			if err := m.GasFeeCap.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -2331,7 +2611,7 @@ func (m *DynamicFeeTx) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			var v github_com_cosmos_cosmos_sdk_types.Int
+			var v cosmossdk_io_math.Int
 			m.Amount = &v
 			if err := m.Amount.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
@@ -2758,6 +3038,171 @@ func (m *MsgEthereumTxResponse) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgUpdateParams) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgUpdateParams: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgUpdateParams: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Authority", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Authority = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Params", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTx
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTx
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTx
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.Params.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTx(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthTx
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MsgUpdateParamsResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTx
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MsgUpdateParamsResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MsgUpdateParamsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
 		default:
 			iNdEx = preIndex
 			skippy, err := skipTx(dAtA[iNdEx:])

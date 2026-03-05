@@ -1,3 +1,18 @@
+// Copyright 2021 Evmos Foundation
+// This file is part of Evmos' Ethermint library.
+//
+// The Ethermint library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The Ethermint library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the Ethermint library. If not, see https://github.com/evmos/ethermint/blob/main/LICENSE
 package personal
 
 import (
@@ -8,14 +23,11 @@ import (
 
 	"github.com/evmos/ethermint/rpc/backend"
 
-	"github.com/cosmos/cosmos-sdk/client"
-
 	"github.com/evmos/ethermint/crypto/hd"
 	ethermint "github.com/evmos/ethermint/types"
 
-	"github.com/tendermint/tendermint/libs/log"
+	"cosmossdk.io/log"
 
-	sdkcrypto "github.com/cosmos/cosmos-sdk/crypto"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -24,13 +36,11 @@ import (
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
 
-	"github.com/evmos/ethermint/crypto/ethsecp256k1"
 	evmtypes "github.com/evmos/ethermint/x/evm/types"
 )
 
 // PrivateAccountAPI is the personal_ prefixed set of APIs in the Web3 JSON-RPC spec.
 type PrivateAccountAPI struct {
-	clientCtx  client.Context
 	backend    backend.EVMBackend
 	logger     log.Logger
 	hdPathIter ethermint.HDPathIterator
@@ -39,7 +49,6 @@ type PrivateAccountAPI struct {
 // NewAPI creates an instance of the public Personal Eth API.
 func NewAPI(
 	logger log.Logger,
-	clientCtx client.Context,
 	backend backend.EVMBackend,
 ) *PrivateAccountAPI {
 	cfg := sdk.GetConfig()
@@ -51,7 +60,6 @@ func NewAPI(
 	}
 
 	return &PrivateAccountAPI{
-		clientCtx:  clientCtx,
 		logger:     logger.With("api", "personal"),
 		hdPathIter: iterator,
 		backend:    backend,
@@ -65,51 +73,13 @@ func NewAPI(
 // NOTE: The key will be both armored and encrypted using the same passphrase.
 func (api *PrivateAccountAPI) ImportRawKey(privkey, password string) (common.Address, error) {
 	api.logger.Debug("personal_importRawKey")
-	priv, err := crypto.HexToECDSA(privkey)
-	if err != nil {
-		return common.Address{}, err
-	}
-
-	privKey := &ethsecp256k1.PrivKey{Key: crypto.FromECDSA(priv)}
-
-	addr := sdk.AccAddress(privKey.PubKey().Address().Bytes())
-	ethereumAddr := common.BytesToAddress(addr)
-
-	// return if the key has already been imported
-	if _, err := api.clientCtx.Keyring.KeyByAddress(addr); err == nil {
-		return ethereumAddr, nil
-	}
-
-	// ignore error as we only care about the length of the list
-	list, _ := api.clientCtx.Keyring.List()
-	privKeyName := fmt.Sprintf("personal_%d", len(list))
-
-	armor := sdkcrypto.EncryptArmorPrivKey(privKey, password, ethsecp256k1.KeyType)
-
-	if err := api.clientCtx.Keyring.ImportPrivKey(privKeyName, armor, password); err != nil {
-		return common.Address{}, err
-	}
-
-	api.logger.Info("key successfully imported", "name", privKeyName, "address", ethereumAddr.String())
-
-	return ethereumAddr, nil
+	return api.backend.ImportRawKey(privkey, password)
 }
 
 // ListAccounts will return a list of addresses for accounts this node manages.
 func (api *PrivateAccountAPI) ListAccounts() ([]common.Address, error) {
 	api.logger.Debug("personal_listAccounts")
-	addrs := []common.Address{}
-
-	list, err := api.clientCtx.Keyring.List()
-	if err != nil {
-		return nil, err
-	}
-
-	for _, info := range list {
-		addrs = append(addrs, common.BytesToAddress(info.GetPubKey().Address()))
-	}
-
-	return addrs, nil
+	return api.backend.ListAccounts()
 }
 
 // LockAccount will lock the account associated with the given address when it's unlocked.
@@ -130,12 +100,16 @@ func (api *PrivateAccountAPI) NewAccount(password string) (common.Address, error
 	// create the mnemonic and save the account
 	hdPath := api.hdPathIter()
 
-	info, _, err := api.clientCtx.Keyring.NewMnemonic(name, keyring.English, hdPath.String(), password, hd.EthSecp256k1)
+	info, err := api.backend.NewMnemonic(name, keyring.English, hdPath.String(), password, hd.EthSecp256k1)
 	if err != nil {
 		return common.Address{}, err
 	}
 
-	addr := common.BytesToAddress(info.GetPubKey().Address().Bytes())
+	pubKey, err := info.GetPubKey()
+	if err != nil {
+		return common.Address{}, err
+	}
+	addr := common.BytesToAddress(pubKey.Address().Bytes())
 	api.logger.Info("Your new key was generated", "address", addr.String())
 	api.logger.Info("Please backup your key file!", "path", os.Getenv("HOME")+"/.ethermint/"+name) // TODO: pass the correct binary
 	api.logger.Info("Please remember your password!")
@@ -156,19 +130,6 @@ func (api *PrivateAccountAPI) UnlockAccount(_ context.Context, addr common.Addre
 // able to decrypt the key it fails.
 func (api *PrivateAccountAPI) SendTransaction(_ context.Context, args evmtypes.TransactionArgs, _ string) (common.Hash, error) {
 	api.logger.Debug("personal_sendTransaction", "address", args.To.String())
-
-	if args.From == nil {
-		return common.Hash{}, fmt.Errorf("from address cannot be nil in send transaction")
-	}
-
-	addr := sdk.AccAddress(args.From.Bytes())
-
-	// check if the key is on the keyring
-	_, err := api.clientCtx.Keyring.KeyByAddress(addr)
-	if err != nil {
-		return common.Hash{}, err
-	}
-
 	return api.backend.SendTransaction(args)
 }
 
@@ -183,17 +144,7 @@ func (api *PrivateAccountAPI) SendTransaction(_ context.Context, args evmtypes.T
 // https://github.com/ethereum/go-ethereum/wiki/Management-APIs#personal_sign
 func (api *PrivateAccountAPI) Sign(_ context.Context, data hexutil.Bytes, addr common.Address, _ string) (hexutil.Bytes, error) {
 	api.logger.Debug("personal_sign", "data", data, "address", addr.String())
-
-	cosmosAddr := sdk.AccAddress(addr.Bytes())
-
-	sig, _, err := api.clientCtx.Keyring.SignByAddress(cosmosAddr, accounts.TextHash(data))
-	if err != nil {
-		api.logger.Error("failed to sign with key", "data", data, "address", addr.String(), "error", err.Error())
-		return nil, err
-	}
-
-	sig[crypto.RecoveryIDOffset] += 27 // transform V from 0/1 to 27/28
-	return sig, nil
+	return api.backend.Sign(addr, data)
 }
 
 // EcRecover returns the address for the account that was used to create the signature.

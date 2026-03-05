@@ -1,24 +1,47 @@
+// Copyright 2021 Evmos Foundation
+// This file is part of Evmos' Ethermint library.
+//
+// The Ethermint library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The Ethermint library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the Ethermint library. If not, see https://github.com/evmos/ethermint/blob/main/LICENSE
 package server
 
 import (
+	"net"
 	"net/http"
 	"time"
 
+	"github.com/evmos/ethermint/server/config"
 	"github.com/gorilla/mux"
 	"github.com/improbable-eng/grpc-web/go/grpcweb"
 	"github.com/spf13/cobra"
+	"golang.org/x/net/netutil"
 
 	sdkserver "github.com/cosmos/cosmos-sdk/server"
 	"github.com/cosmos/cosmos-sdk/server/types"
 	"github.com/cosmos/cosmos-sdk/version"
 
-	tmcmd "github.com/tendermint/tendermint/cmd/tendermint/commands"
-	tmlog "github.com/tendermint/tendermint/libs/log"
-	rpcclient "github.com/tendermint/tendermint/rpc/jsonrpc/client"
+	tmlog "cosmossdk.io/log"
+	tmcmd "github.com/cometbft/cometbft/cmd/cometbft/commands"
+	rpcclient "github.com/cometbft/cometbft/rpc/jsonrpc/client"
 )
 
-// add server commands
-func AddCommands(rootCmd *cobra.Command, defaultNodeHome string, appCreator types.AppCreator, appExport types.AppExporter, addStartFlags types.ModuleInitFlags) {
+// AddCommands adds server commands
+func AddCommands(
+	rootCmd *cobra.Command,
+	opts StartOptions,
+	appExport types.AppExporter,
+	addStartFlags types.ModuleInitFlags,
+) {
 	tendermintCmd := &cobra.Command{
 		Use:   "tendermint",
 		Short: "Tendermint subcommands",
@@ -33,15 +56,18 @@ func AddCommands(rootCmd *cobra.Command, defaultNodeHome string, appCreator type
 		tmcmd.ResetStateCmd,
 	)
 
-	startCmd := StartCmd(appCreator, defaultNodeHome)
+	startCmd := StartCmd(opts)
 	addStartFlags(startCmd)
 
 	rootCmd.AddCommand(
 		startCmd,
 		tendermintCmd,
-		sdkserver.ExportCmd(appExport, defaultNodeHome),
+		sdkserver.ExportCmd(appExport, opts.DefaultNodeHome),
 		version.NewVersionCommand(),
-		sdkserver.NewRollbackCmd(defaultNodeHome),
+		sdkserver.NewRollbackCmd(opts.AppCreator, opts.DefaultNodeHome),
+
+		// custom tx indexer command
+		NewIndexTxCmd(),
 	)
 }
 
@@ -80,7 +106,6 @@ func MountGRPCWebServices(
 	logger tmlog.Logger,
 ) {
 	for _, res := range grpcResources {
-
 		logger.Info("[GRPC Web] HTTP POST mounted", "resource", res)
 
 		s := router.Methods("POST").Subrouter()
@@ -96,4 +121,20 @@ func MountGRPCWebServices(
 			}
 		})
 	}
+}
+
+// Listen starts a net.Listener on the tcp network on the given address.
+// If there is a specified MaxOpenConnections in the config, it will also set the limitListener.
+func Listen(addr string, config *config.Config) (net.Listener, error) {
+	if addr == "" {
+		addr = ":http"
+	}
+	ln, err := net.Listen("tcp", addr)
+	if err != nil {
+		return nil, err
+	}
+	if config.JSONRPC.MaxOpenConnections > 0 {
+		ln = netutil.LimitListener(ln, config.JSONRPC.MaxOpenConnections)
+	}
+	return ln, err
 }

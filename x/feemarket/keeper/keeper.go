@@ -1,39 +1,63 @@
+// Copyright 2021 Evmos Foundation
+// This file is part of Evmos' Ethermint library.
+//
+// The Ethermint library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The Ethermint library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the Ethermint library. If not, see https://github.com/evmos/ethermint/blob/main/LICENSE
 package keeper
 
 import (
+	"math/big"
+
+	"cosmossdk.io/log"
+	storetypes "cosmossdk.io/store/types"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	"github.com/tendermint/tendermint/libs/log"
+	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
 	"github.com/evmos/ethermint/x/feemarket/types"
 )
+
+// KeyPrefixBaseFeeV1 TODO: Temporary will be removed with params refactor PR
+var KeyPrefixBaseFeeV1 = []byte{2}
 
 // Keeper grants access to the Fee Market module state.
 type Keeper struct {
 	// Protobuf codec
 	cdc codec.BinaryCodec
 	// Store key required for the Fee Market Prefix KVStore.
-	storeKey     sdk.StoreKey
-	transientKey sdk.StoreKey
-	// module specific parameter space that can be configured through governance
-	paramSpace paramtypes.Subspace
+	storeKey     storetypes.StoreKey
+	transientKey storetypes.StoreKey
+	// the address capable of executing a MsgUpdateParams message. Typically, this should be the x/gov module account.
+	authority sdk.AccAddress
+	// Legacy subspace
+	ss paramstypes.Subspace
 }
 
 // NewKeeper generates new fee market module keeper
 func NewKeeper(
-	cdc codec.BinaryCodec, paramSpace paramtypes.Subspace, storeKey, transientKey sdk.StoreKey,
+	cdc codec.BinaryCodec, authority sdk.AccAddress, storeKey, transientKey storetypes.StoreKey, ss paramstypes.Subspace,
 ) Keeper {
-	// set KeyTable if it has not already been set
-	if !paramSpace.HasKeyTable() {
-		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
+	// ensure authority account is correctly formatted
+	if err := sdk.VerifyAddressFormat(authority); err != nil {
+		panic(err)
 	}
 
 	return Keeper{
 		cdc:          cdc,
 		storeKey:     storeKey,
-		paramSpace:   paramSpace,
+		authority:    authority,
 		transientKey: transientKey,
+		ss:           ss,
 	}
 }
 
@@ -88,4 +112,16 @@ func (k Keeper) AddTransientGasWanted(ctx sdk.Context, gasWanted uint64) (uint64
 	result := k.GetTransientGasWanted(ctx) + gasWanted
 	k.SetTransientBlockGasWanted(ctx, result)
 	return result, nil
+}
+
+// GetBaseFeeV1 get the base fee from v1 version of states.
+// return nil if base fee is not enabled
+// TODO: Figure out if this will be deleted ?
+func (k Keeper) GetBaseFeeV1(ctx sdk.Context) *big.Int {
+	store := ctx.KVStore(k.storeKey)
+	bz := store.Get(KeyPrefixBaseFeeV1)
+	if len(bz) == 0 {
+		return nil
+	}
+	return new(big.Int).SetBytes(bz)
 }

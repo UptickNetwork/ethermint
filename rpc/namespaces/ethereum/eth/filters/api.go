@@ -1,3 +1,18 @@
+// Copyright 2021 Evmos Foundation
+// This file is part of Evmos' Ethermint library.
+//
+// The Ethermint library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The Ethermint library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the Ethermint library. If not, see https://github.com/evmos/ethermint/blob/main/LICENSE
 package filters
 
 import (
@@ -9,11 +24,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/evmos/ethermint/rpc/types"
 
-	"github.com/tendermint/tendermint/libs/log"
+	"cosmossdk.io/log"
 
-	coretypes "github.com/tendermint/tendermint/rpc/core/types"
-	rpcclient "github.com/tendermint/tendermint/rpc/jsonrpc/client"
-	tmtypes "github.com/tendermint/tendermint/types"
+	coretypes "github.com/cometbft/cometbft/rpc/core/types"
+	rpcclient "github.com/cometbft/cometbft/rpc/jsonrpc/client"
+	tmtypes "github.com/cometbft/cometbft/types"
 
 	"github.com/ethereum/go-ethereum/common"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
@@ -23,13 +38,24 @@ import (
 	evmtypes "github.com/evmos/ethermint/x/evm/types"
 )
 
+// FilterAPI gathers
+type FilterAPI interface {
+	NewPendingTransactionFilter() rpc.ID
+	NewBlockFilter() rpc.ID
+	NewFilter(criteria filters.FilterCriteria) (rpc.ID, error)
+	GetFilterChanges(id rpc.ID) (interface{}, error)
+	GetFilterLogs(ctx context.Context, id rpc.ID) ([]*ethtypes.Log, error)
+	UninstallFilter(id rpc.ID) bool
+	GetLogs(ctx context.Context, crit filters.FilterCriteria) ([]*ethtypes.Log, error)
+}
+
 // Backend defines the methods requided by the PublicFilterAPI backend
 type Backend interface {
 	GetBlockByNumber(blockNum types.BlockNumber, fullTx bool) (map[string]interface{}, error)
 	HeaderByNumber(blockNum types.BlockNumber) (*ethtypes.Header, error)
 	HeaderByHash(blockHash common.Hash) (*ethtypes.Header, error)
-	GetTendermintBlockByHash(hash common.Hash) (*coretypes.ResultBlock, error)
-	GetTendermintBlockResultByNumber(height *int64) (*coretypes.ResultBlockResults, error)
+	TendermintBlockByHash(hash common.Hash) (*coretypes.ResultBlock, error)
+	TendermintBlockResultByNumber(height *int64) (*coretypes.ResultBlockResults, error)
 	GetLogs(blockHash common.Hash) ([][]*ethtypes.Log, error)
 	GetLogsByHeight(*int64) ([][]*ethtypes.Log, error)
 	BlockBloom(blockRes *coretypes.ResultBlockResults) (ethtypes.Bloom, error)
@@ -125,7 +151,12 @@ func (api *PublicFilterAPI) NewPendingTransactionFilter() rpc.ID {
 		return rpc.ID(fmt.Sprintf("error creating pending tx filter: %s", err.Error()))
 	}
 
-	api.filters[pendingTxSub.ID()] = &filter{typ: filters.PendingTransactionsSubscription, deadline: time.NewTimer(deadline), hashes: make([]common.Hash, 0), s: pendingTxSub}
+	api.filters[pendingTxSub.ID()] = &filter{
+		typ:      filters.PendingTransactionsSubscription,
+		deadline: time.NewTimer(deadline),
+		hashes:   make([]common.Hash, 0),
+		s:        pendingTxSub,
+	}
 
 	go func(txsCh <-chan coretypes.ResultEvent, errCh <-chan error) {
 		defer cancelSubs()
@@ -157,7 +188,7 @@ func (api *PublicFilterAPI) NewPendingTransactionFilter() rpc.ID {
 					for _, msg := range tx.GetMsgs() {
 						ethTx, ok := msg.(*evmtypes.MsgEthereumTx)
 						if ok {
-							f.hashes = append(f.hashes, common.HexToHash(ethTx.Hash))
+							f.hashes = append(f.hashes, ethTx.AsTransaction().Hash())
 						}
 					}
 				}
@@ -221,7 +252,7 @@ func (api *PublicFilterAPI) NewPendingTransactions(ctx context.Context) (*rpc.Su
 				for _, msg := range tx.GetMsgs() {
 					ethTx, ok := msg.(*evmtypes.MsgEthereumTx)
 					if ok {
-						_ = notifier.Notify(rpcSub.ID, common.HexToHash(ethTx.Hash))
+						_ = notifier.Notify(rpcSub.ID, ethTx.AsTransaction().Hash())
 					}
 				}
 			case <-rpcSub.Err():
@@ -276,12 +307,9 @@ func (api *PublicFilterAPI) NewBlockFilter() rpc.ID {
 					continue
 				}
 
-				baseFee := types.BaseFeeFromEvents(data.ResultBeginBlock.Events)
-
-				header := types.EthHeaderFromTendermint(data.Header, ethtypes.Bloom{}, baseFee)
 				api.filtersMu.Lock()
 				if f, found := api.filters[headerSub.ID()]; found {
-					f.hashes = append(f.hashes, header.Hash())
+					f.hashes = append(f.hashes, common.BytesToHash(data.Header.Hash()))
 				}
 				api.filtersMu.Unlock()
 			case <-errCh:
@@ -322,16 +350,16 @@ func (api *PublicFilterAPI) NewHeads(ctx context.Context) (*rpc.Subscription, er
 					return
 				}
 
-				data, ok := ev.Data.(tmtypes.EventDataNewBlockHeader)
+				data, ok := ev.Data.(tmtypes.EventDataNewBlock)
 				if !ok {
 					api.logger.Debug("event data type mismatch", "type", fmt.Sprintf("%T", ev.Data))
 					continue
 				}
 
-				baseFee := types.BaseFeeFromEvents(data.ResultBeginBlock.Events)
+				baseFee := types.BaseFeeFromEvents(data.ResultFinalizeBlock.Events)
 
 				// TODO: fetch bloom from events
-				header := types.EthHeaderFromTendermint(data.Header, ethtypes.Bloom{}, baseFee)
+				header := types.EthHeaderFromTendermint(data.Block.Header, ethtypes.Bloom{}, baseFee)
 				_ = notifier.Notify(rpcSub.ID, header)
 			case <-rpcSub.Err():
 				headersSub.Unsubscribe(api.events)
@@ -389,6 +417,7 @@ func (api *PublicFilterAPI) Logs(ctx context.Context, crit filters.FilterCriteri
 
 				txResponse, err := evmtypes.DecodeTxResponse(dataTx.TxResult.Result.Data)
 				if err != nil {
+					api.logger.Error("fail to decode tx response", "error", err)
 					return
 				}
 
@@ -443,7 +472,13 @@ func (api *PublicFilterAPI) NewFilter(criteria filters.FilterCriteria) (rpc.ID, 
 
 	filterID = logsSub.ID()
 
-	api.filters[filterID] = &filter{typ: filters.LogsSubscription, crit: criteria, deadline: time.NewTimer(deadline), hashes: []common.Hash{}, s: logsSub}
+	api.filters[filterID] = &filter{
+		typ:      filters.LogsSubscription,
+		crit:     criteria,
+		deadline: time.NewTimer(deadline),
+		hashes:   []common.Hash{},
+		s:        logsSub,
+	}
 
 	go func(eventCh <-chan coretypes.ResultEvent) {
 		defer cancelSubs()
@@ -465,6 +500,7 @@ func (api *PublicFilterAPI) NewFilter(criteria filters.FilterCriteria) (rpc.ID, 
 
 				txResponse, err := evmtypes.DecodeTxResponse(dataTx.TxResult.Result.Data)
 				if err != nil {
+					api.logger.Error("fail to decode tx response", "error", err)
 					return
 				}
 

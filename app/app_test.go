@@ -1,41 +1,31 @@
 package app
 
 import (
-	"encoding/json"
-	"os"
 	"testing"
 
+	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/stretchr/testify/require"
 
-	"github.com/cosmos/cosmos-sdk/simapp"
+	simtestutil "github.com/cosmos/cosmos-sdk/testutil/sims"
 
-	abci "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/libs/log"
-	dbm "github.com/tendermint/tm-db"
-
-	"github.com/evmos/ethermint/encoding"
+	"cosmossdk.io/log"
+	dbm "github.com/cosmos/cosmos-db"
 )
 
 func TestEthermintAppExport(t *testing.T) {
 	db := dbm.NewMemDB()
-	app := NewEthermintApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, map[int64]bool{}, DefaultNodeHome, 0, encoding.MakeConfig(ModuleBasics), simapp.EmptyAppOptions{})
+	app := SetupWithDB(false, nil, db)
+	_, err := app.FinalizeBlock(&abci.RequestFinalizeBlock{
+		Height: 1,
+	})
+	require.NoError(t, err, "FinalizeBlock should not have an error")
 
-	genesisState := NewDefaultGenesisState()
-	stateBytes, err := json.MarshalIndent(genesisState, "", "  ")
-	require.NoError(t, err)
-
-	// Initialize the chain
-	app.InitChain(
-		abci.RequestInitChain{
-			ChainId:       "ethermint_9000-1",
-			Validators:    []abci.ValidatorUpdate{},
-			AppStateBytes: stateBytes,
-		},
-	)
-	app.Commit()
+	_, err = app.Commit()
+	require.NoError(t, err, "Commit failed on setup with db")
 
 	// Making a new app object with the db, so that initchain hasn't been called
-	app2 := NewEthermintApp(log.NewTMLogger(log.NewSyncWriter(os.Stdout)), db, nil, true, map[int64]bool{}, DefaultNodeHome, 0, encoding.MakeConfig(ModuleBasics), simapp.EmptyAppOptions{})
-	_, err = app2.ExportAppStateAndValidators(false, []string{})
+	app2 := NewEthermintApp(
+		log.NewNopLogger(), db, nil, true, map[int64]bool{}, DefaultNodeHome, simtestutil.EmptyAppOptions{})
+	_, err = app2.ExportAppStateAndValidators(false, []string{}, []string{})
 	require.NoError(t, err, "ExportAppStateAndValidators should not have an error")
 }

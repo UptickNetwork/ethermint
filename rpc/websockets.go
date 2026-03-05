@@ -1,3 +1,18 @@
+// Copyright 2021 Evmos Foundation
+// This file is part of Evmos' Ethermint library.
+//
+// The Ethermint library is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// The Ethermint library is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with the Ethermint library. If not, see https://github.com/evmos/ethermint/blob/main/LICENSE
 package rpc
 
 import (
@@ -5,7 +20,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"math/big"
 	"net"
 	"net/http"
@@ -22,9 +37,9 @@ import (
 	"github.com/ethereum/go-ethereum/params"
 	"github.com/ethereum/go-ethereum/rpc"
 
-	"github.com/tendermint/tendermint/libs/log"
-	rpcclient "github.com/tendermint/tendermint/rpc/jsonrpc/client"
-	tmtypes "github.com/tendermint/tendermint/types"
+	"cosmossdk.io/log"
+	rpcclient "github.com/cometbft/cometbft/rpc/jsonrpc/client"
+	tmtypes "github.com/cometbft/cometbft/types"
 
 	"github.com/evmos/ethermint/rpc/ethereum/pubsub"
 	rpcfilters "github.com/evmos/ethermint/rpc/namespaces/ethereum/eth/filters"
@@ -74,7 +89,7 @@ type websocketsServer struct {
 	logger   log.Logger
 }
 
-func NewWebsocketsServer(clientCtx client.Context, logger log.Logger, tmWSClient *rpcclient.WSClient, cfg config.Config) WebsocketsServer {
+func NewWebsocketsServer(clientCtx client.Context, logger log.Logger, tmWSClient *rpcclient.WSClient, cfg *config.Config) WebsocketsServer {
 	logger = logger.With("api", "websocket-server")
 	_, port, _ := net.SplitHostPort(cfg.JSONRPC.Address)
 
@@ -94,6 +109,7 @@ func (s *websocketsServer) Start() {
 
 	go func() {
 		var err error
+		/* #nosec G114 -- http functions have no support for timeouts */
 		if s.certFile == "" || s.keyFile == "" {
 			err = http.ListenAndServe(s.wsAddr, ws)
 		} else {
@@ -185,6 +201,13 @@ func (s *websocketsServer) readLoop(wsConn *wsConn) {
 			return
 		}
 
+		if isBatch(mb) {
+			if err := s.tcpGetAndSendResponse(wsConn, mb); err != nil {
+				s.sendErrResponse(wsConn, err.Error())
+			}
+			continue
+		}
+
 		var msg map[string]interface{}
 		if err = json.Unmarshal(mb, &msg); err != nil {
 			s.sendErrResponse(wsConn, err.Error())
@@ -213,14 +236,8 @@ func (s *websocketsServer) readLoop(wsConn *wsConn) {
 
 		switch method {
 		case "eth_subscribe":
-			params, ok := msg["params"].([]interface{})
+			params, ok := s.getParamsAndCheckValid(msg, wsConn)
 			if !ok {
-				s.sendErrResponse(wsConn, "invalid parameters")
-				continue
-			}
-
-			if len(params) == 0 {
-				s.sendErrResponse(wsConn, "empty parameters")
 				continue
 			}
 
@@ -242,14 +259,8 @@ func (s *websocketsServer) readLoop(wsConn *wsConn) {
 				break
 			}
 		case "eth_unsubscribe":
-			params, ok := msg["params"].([]interface{})
+			params, ok := s.getParamsAndCheckValid(msg, wsConn)
 			if !ok {
-				s.sendErrResponse(wsConn, "invalid parameters")
-				continue
-			}
-
-			if len(params) == 0 {
-				s.sendErrResponse(wsConn, "empty parameters")
 				continue
 			}
 
@@ -284,6 +295,22 @@ func (s *websocketsServer) readLoop(wsConn *wsConn) {
 	}
 }
 
+// tcpGetAndSendResponse sends error response to client if params is invalid
+func (s *websocketsServer) getParamsAndCheckValid(msg map[string]interface{}, wsConn *wsConn) ([]interface{}, bool) {
+	params, ok := msg["params"].([]interface{})
+	if !ok {
+		s.sendErrResponse(wsConn, "invalid parameters")
+		return nil, false
+	}
+
+	if len(params) == 0 {
+		s.sendErrResponse(wsConn, "empty parameters")
+		return nil, false
+	}
+
+	return params, true
+}
+
 // tcpGetAndSendResponse connects to the rest-server over tcp, posts a JSON-RPC request, and sends the response
 // to the client over websockets
 func (s *websocketsServer) tcpGetAndSendResponse(wsConn *wsConn, mb []byte) error {
@@ -301,7 +328,7 @@ func (s *websocketsServer) tcpGetAndSendResponse(wsConn *wsConn, mb []byte) erro
 
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return errors.Wrap(err, "could not read body from response")
 	}
@@ -654,6 +681,19 @@ func (api *pubSubAPI) subscribePendingTransactions(wsConn *wsConn, subID rpc.ID)
 	return unsubFn, nil
 }
 
-func (api *pubSubAPI) subscribeSyncing(wsConn *wsConn, subID rpc.ID) (pubsub.UnsubscribeFunc, error) {
+func (api *pubSubAPI) subscribeSyncing(_ *wsConn, _ rpc.ID) (pubsub.UnsubscribeFunc, error) {
 	return nil, errors.New("syncing subscription is not implemented")
+}
+
+// copy from github.com/ethereum/go-ethereum/rpc/json.go
+// isBatch returns true when the first non-whitespace characters is '['
+func isBatch(raw []byte) bool {
+	for _, c := range raw {
+		// skip insignificant whitespace (http://www.ietf.org/rfc/rfc4627.txt)
+		if c == 0x20 || c == 0x09 || c == 0x0a || c == 0x0d {
+			continue
+		}
+		return c == '['
+	}
+	return false
 }
