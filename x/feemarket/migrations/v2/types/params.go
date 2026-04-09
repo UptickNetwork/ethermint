@@ -39,8 +39,8 @@ func NewParams(noBaseFee bool, baseFeeChangeDenom, elasticityMultiplier uint32, 
 func DefaultParams() Params {
 	return Params{
 		NoBaseFee:                false,
-		BaseFeeChangeDenominator: params.BaseFeeChangeDenominator,
-		ElasticityMultiplier:     params.ElasticityMultiplier,
+		BaseFeeChangeDenominator: 8,
+		ElasticityMultiplier:     2,
 		BaseFee:                  math.NewIntFromUint64(params.InitialBaseFee),
 		EnableHeight:             0,
 	}

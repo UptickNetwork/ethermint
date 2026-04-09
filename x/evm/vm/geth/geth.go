@@ -18,6 +18,7 @@ package geth
 import (
 	"math/big"
 
+	"github.com/ethereum/go-ethereum/core/tracing"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/vm"
 	"github.com/ethereum/go-ethereum/params"
@@ -90,5 +91,5 @@ func (EVM) RunPrecompiledContract(
 	suppliedGas uint64,
 	_ *big.Int, // 	value arg is unused
 ) (ret []byte, remainingGas uint64, err error) {
-	return vm.RunPrecompiledContract(p, input, suppliedGas)
+	return vm.RunPrecompiledContract(p, input, suppliedGas, (*tracing.Hooks)(nil))
 }

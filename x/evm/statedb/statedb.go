@@ -23,9 +23,14 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/stateless"
+	"github.com/ethereum/go-ethereum/core/tracing"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/core/vm"
 	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/params"
+	"github.com/ethereum/go-ethereum/trie/utils"
+	"github.com/holiman/uint256"
 )
 
 // revision is the identifier of a version of state.
@@ -131,12 +136,12 @@ func (s *StateDB) Empty(addr common.Address) bool {
 }
 
 // GetBalance retrieves the balance from the given address or 0 if object not found
-func (s *StateDB) GetBalance(addr common.Address) *big.Int {
+func (s *StateDB) GetBalance(addr common.Address) *uint256.Int {
 	stateObject := s.getStateObject(addr)
 	if stateObject != nil {
-		return stateObject.Balance()
+		return toUint256(stateObject.Balance())
 	}
-	return common.Big0
+	return new(uint256.Int)
 }
 
 // GetNonce returns the nonce of account, 0 if not exists.
@@ -303,19 +308,96 @@ func (s *StateDB) setStateObject(object *stateObject) {
  */
 
 // AddBalance adds amount to the account associated with addr.
-func (s *StateDB) AddBalance(addr common.Address, amount *big.Int) {
+func (s *StateDB) AddBalance(addr common.Address, amount *uint256.Int, _ tracing.BalanceChangeReason) uint256.Int {
+	stateObject := s.getOrNewStateObject(addr)
+	if stateObject == nil {
+		return uint256.Int{}
+	}
+	stateObject.AddBalance(amount.ToBig())
+	return *toUint256(stateObject.Balance())
+}
+
+// SetBalance sets amount to the account associated with addr.
+func (s *StateDB) SetBalance(addr common.Address, amount *uint256.Int, _ tracing.BalanceChangeReason) {
 	stateObject := s.getOrNewStateObject(addr)
 	if stateObject != nil {
-		stateObject.AddBalance(amount)
+		stateObject.SetBalance(amount.ToBig())
 	}
 }
 
 // SubBalance subtracts amount from the account associated with addr.
-func (s *StateDB) SubBalance(addr common.Address, amount *big.Int) {
+func (s *StateDB) SubBalance(addr common.Address, amount *uint256.Int, _ tracing.BalanceChangeReason) uint256.Int {
 	stateObject := s.getOrNewStateObject(addr)
-	if stateObject != nil {
-		stateObject.SubBalance(amount)
+	if stateObject == nil {
+		return uint256.Int{}
 	}
+	stateObject.SubBalance(amount.ToBig())
+	return *toUint256(stateObject.Balance())
+}
+
+// CreateContract creates a contract account.
+func (s *StateDB) CreateContract(addr common.Address) {
+	s.CreateAccount(addr)
+}
+
+// SetTransientState is currently a no-op for ethermint statedb.
+func (s *StateDB) SetTransientState(_ common.Address, _ common.Hash, _ common.Hash) {}
+
+// GetTransientState always returns zero hash for now.
+func (s *StateDB) GetTransientState(_ common.Address, _ common.Hash) common.Hash {
+	return common.Hash{}
+}
+
+// GetStorageRoot returns zero hash as storage root is not tracked here.
+func (s *StateDB) GetStorageRoot(_ common.Address) common.Hash {
+	return common.Hash{}
+}
+
+// SelfDestruct marks the account as suicided and clears balance.
+func (s *StateDB) SelfDestruct(addr common.Address) uint256.Int {
+	stateObject := s.getStateObject(addr)
+	if stateObject == nil {
+		return uint256.Int{}
+	}
+	prev := toUint256(stateObject.Balance())
+	_ = s.Suicide(addr)
+	return *prev
+}
+
+// SelfDestruct6780 follows SelfDestruct behavior in this implementation.
+func (s *StateDB) SelfDestruct6780(addr common.Address) (uint256.Int, bool) {
+	prev := s.SelfDestruct(addr)
+	return prev, true
+}
+
+// HasSelfDestructed returns whether account has self-destructed.
+func (s *StateDB) HasSelfDestructed(addr common.Address) bool {
+	return s.HasSuicided(addr)
+}
+
+// Prepare prepares access list according to rules.
+func (s *StateDB) Prepare(_ params.Rules, sender, _ common.Address, dst *common.Address, precompiles []common.Address, list ethtypes.AccessList) {
+	s.PrepareAccessList(sender, dst, precompiles, list)
+}
+
+// PointCache returns a point cache placeholder.
+func (s *StateDB) PointCache() *utils.PointCache {
+	return nil
+}
+
+// Witness is unsupported and returns nil.
+func (s *StateDB) Witness() *stateless.Witness {
+	return nil
+}
+
+// Finalise is a no-op for this statedb implementation.
+func (s *StateDB) Finalise(_ bool) {}
+
+func toUint256(v *big.Int) *uint256.Int {
+	if v == nil {
+		return new(uint256.Int)
+	}
+	return uint256.MustFromBig(v)
 }
 
 // SetNonce sets the nonce of account.
@@ -335,11 +417,14 @@ func (s *StateDB) SetCode(addr common.Address, code []byte) {
 }
 
 // SetState sets the contract state.
-func (s *StateDB) SetState(addr common.Address, key, value common.Hash) {
+func (s *StateDB) SetState(addr common.Address, key, value common.Hash) common.Hash {
 	stateObject := s.getOrNewStateObject(addr)
 	if stateObject != nil {
+		prev := stateObject.GetState(key)
 		stateObject.SetState(key, value)
+		return prev
 	}
+	return common.Hash{}
 }
 
 // Suicide marks the given account as suicided.

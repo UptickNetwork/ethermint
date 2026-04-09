@@ -42,16 +42,16 @@ type EVM interface {
 	Cancel()
 	Cancelled() bool //nolint
 	Interpreter() *vm.EVMInterpreter
-	Call(caller vm.ContractRef, addr common.Address, input []byte, gas uint64, value *big.Int) (ret []byte, leftOverGas uint64, err error)
-	CallCode(caller vm.ContractRef, addr common.Address, input []byte, gas uint64, value *big.Int) (ret []byte, leftOverGas uint64, err error)
+	Call(caller vm.ContractRef, addr common.Address, input []byte, gas uint64, value *uint256.Int) (ret []byte, leftOverGas uint64, err error)
+	CallCode(caller vm.ContractRef, addr common.Address, input []byte, gas uint64, value *uint256.Int) (ret []byte, leftOverGas uint64, err error)
 	DelegateCall(caller vm.ContractRef, addr common.Address, input []byte, gas uint64) (ret []byte, leftOverGas uint64, err error)
 	StaticCall(caller vm.ContractRef, addr common.Address, input []byte, gas uint64) (ret []byte, leftOverGas uint64, err error)
-	Create(caller vm.ContractRef, code []byte, gas uint64, value *big.Int) (ret []byte, contractAddr common.Address, leftOverGas uint64, err error)
+	Create(caller vm.ContractRef, code []byte, gas uint64, value *uint256.Int) (ret []byte, contractAddr common.Address, leftOverGas uint64, err error)
 	Create2(
 		caller vm.ContractRef,
 		code []byte,
 		gas uint64,
-		endowment *big.Int,
+		endowment *uint256.Int,
 		salt *uint256.Int) (
 		ret []byte, contractAddr common.Address, leftOverGas uint64, err error,
 	)

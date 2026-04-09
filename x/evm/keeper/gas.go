@@ -18,7 +18,6 @@ package keeper
 import (
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core"
 	"github.com/ethereum/go-ethereum/params"
 
@@ -36,8 +35,9 @@ func (k *Keeper) GetEthIntrinsicGas(ctx sdk.Context, msg core.Message, cfg *para
 	height := big.NewInt(ctx.BlockHeight())
 	homestead := cfg.IsHomestead(height)
 	istanbul := cfg.IsIstanbul(height)
+	isShanghai := cfg.IsShanghai(height, uint64(ctx.BlockTime().Unix()))
 
-	return core.IntrinsicGas(msg.Data(), msg.AccessList(), isContractCreation, homestead, istanbul)
+	return core.IntrinsicGas(msg.Data, msg.AccessList, isContractCreation, homestead, istanbul, isShanghai)
 }
 
 // RefundGas transfers the leftover gas to the sender of the message, caped to half of the total gas
@@ -46,11 +46,8 @@ func (k *Keeper) GetEthIntrinsicGas(ctx sdk.Context, msg core.Message, cfg *para
 // AnteHandler.
 func (k *Keeper) RefundGas(ctx sdk.Context, msg core.Message, leftoverGas uint64, denom string) error {
 	// Return EVM tokens for remaining gas, exchanged at the original rate.
-	remaining := new(big.Int).Mul(new(big.Int).SetUint64(leftoverGas), msg.GasPrice())
-	feePayer := msg.From().Bytes()
-	if m, ok := msg.(types.Message); ok {
-		feePayer = common.HexToAddress(m.FeePayer).Bytes()
-	}
+	remaining := new(big.Int).Mul(new(big.Int).SetUint64(leftoverGas), msg.GasPrice)
+	feePayer := msg.From.Bytes()
 
 	switch remaining.Sign() {
 	case -1:

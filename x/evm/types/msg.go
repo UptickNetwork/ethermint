@@ -38,7 +38,6 @@ import (
 	"github.com/evmos/ethermint/types"
 
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/math"
 	"github.com/ethereum/go-ethereum/core"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	evmapi "github.com/evmos/ethermint/api/ethermint/evm/v1"
@@ -356,12 +355,16 @@ func (msg MsgEthereumTx) AsTransaction() *ethtypes.Transaction {
 func (msg MsgEthereumTx) AsMessage(signer ethtypes.Signer, baseFee *big.Int) (core.Message, error) {
 	txData, err := UnpackTxData(msg.Data)
 	if err != nil {
-		return nil, err
+		return core.Message{}, err
 	}
 
 	gasPrice, gasFeeCap, gasTipCap := txData.GetGasPrice(), txData.GetGasFeeCap(), txData.GetGasTipCap()
 	if baseFee != nil {
-		gasPrice = math.BigMin(gasPrice.Add(gasTipCap, baseFee), gasFeeCap)
+		effectiveGas := new(big.Int).Add(gasTipCap, baseFee)
+		if effectiveGas.Cmp(gasFeeCap) > 0 {
+			effectiveGas = gasFeeCap
+		}
+		gasPrice = effectiveGas
 	}
 	var from common.Address
 	if len(msg.From) > 0 {
@@ -374,29 +377,29 @@ func (msg MsgEthereumTx) AsMessage(signer ethtypes.Signer, baseFee *big.Int) (co
 		// heavy path
 		from, err = signer.Sender(msg.AsTransaction())
 		if err != nil {
-			return nil, err
+			return core.Message{}, err
 		}
 	}
-	ethMsg := ethtypes.NewMessage(
-		from,
-		txData.GetTo(),
-		txData.GetNonce(),
-		txData.GetValue(),
-		txData.GetGas(),
-		gasPrice, gasFeeCap, gasTipCap,
-		txData.GetData(),
-		txData.GetAccessList(),
-		false,
-	)
+	ethMsg := core.Message{
+		To:               txData.GetTo(),
+		From:             from,
+		Nonce:            txData.GetNonce(),
+		Value:            txData.GetValue(),
+		GasLimit:         txData.GetGas(),
+		GasPrice:         gasPrice,
+		GasFeeCap:        gasFeeCap,
+		GasTipCap:        gasTipCap,
+		Data:             txData.GetData(),
+		AccessList:       txData.GetAccessList(),
+		SkipNonceChecks:  false,
+		SkipFromEOACheck: false,
+	}
 
 	if msg.FeePayer == "" {
 		return ethMsg, nil
 	}
 
-	return Message{
-		Message:  ethMsg,
-		FeePayer: msg.FeePayer,
-	}, nil
+	return ethMsg, nil
 }
 
 // GetSender extracts the sender address from the signature values using the latest signer for the given chainID.

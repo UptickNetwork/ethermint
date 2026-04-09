@@ -30,13 +30,13 @@ func GetPrecompiles(cfg *params.ChainConfig, blockNumber *big.Int) evm.Precompil
 	var precompiles evm.PrecompiledContracts
 	switch {
 	case cfg.IsBerlin(blockNumber):
-		precompiles = vm.PrecompiledContractsBerlin
+		precompiles = evm.PrecompiledContracts(vm.PrecompiledContractsBerlin)
 	case cfg.IsIstanbul(blockNumber):
-		precompiles = vm.PrecompiledContractsIstanbul
+		precompiles = evm.PrecompiledContracts(vm.PrecompiledContractsIstanbul)
 	case cfg.IsByzantium(blockNumber):
-		precompiles = vm.PrecompiledContractsByzantium
+		precompiles = evm.PrecompiledContracts(vm.PrecompiledContractsByzantium)
 	default:
-		precompiles = vm.PrecompiledContractsHomestead
+		precompiles = evm.PrecompiledContracts(vm.PrecompiledContractsHomestead)
 	}
 	return precompiles
 }

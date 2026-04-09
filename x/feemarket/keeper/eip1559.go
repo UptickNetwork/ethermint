@@ -16,12 +16,12 @@
 package keeper
 
 import (
+	stdmath "math"
 	"math/big"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/math"
 )
 
 // CalculateBaseFee calculates the base fee for the current block. This is only calculated once per
@@ -56,7 +56,7 @@ func (k Keeper) CalculateBaseFee(ctx sdk.Context) *big.Int {
 
 	parentGasUsed := k.GetBlockGasWanted(ctx)
 
-	gasLimit := new(big.Int).SetUint64(math.MaxUint64)
+	gasLimit := new(big.Int).SetUint64(stdmath.MaxUint64)
 
 	// NOTE: a MaxGas equal to -1 means that block gas is unlimited
 	if consParams.Block != nil && consParams.Block.MaxGas > -1 {
@@ -85,7 +85,7 @@ func (k Keeper) CalculateBaseFee(ctx sdk.Context) *big.Int {
 		gasUsedDelta := new(big.Int).SetUint64(parentGasUsed - parentGasTarget)
 		x := new(big.Int).Mul(parentBaseFee, gasUsedDelta)
 		y := x.Div(x, parentGasTargetBig)
-		baseFeeDelta := math.BigMax(
+		baseFeeDelta := bigMax(
 			x.Div(y, baseFeeChangeDenominator),
 			common.Big1,
 		)
@@ -103,5 +103,12 @@ func (k Keeper) CalculateBaseFee(ctx sdk.Context) *big.Int {
 	// Set global min gas price as lower bound of the base fee, transactions below
 	// the min gas price don't even reach the mempool.
 	minGasPrice := params.MinGasPrice.TruncateInt().BigInt()
-	return math.BigMax(x.Sub(parentBaseFee, baseFeeDelta), minGasPrice)
+	return bigMax(x.Sub(parentBaseFee, baseFeeDelta), minGasPrice)
+}
+
+func bigMax(a, b *big.Int) *big.Int {
+	if a.Cmp(b) >= 0 {
+		return a
+	}
+	return b
 }

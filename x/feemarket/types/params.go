@@ -33,6 +33,9 @@ var (
 	DefaultEnableHeight = int64(0)
 	// DefaultNoBaseFee is false
 	DefaultNoBaseFee = false
+	// EIP-1559 default values. go-ethereum v1.14+ no longer exports these constants.
+	DefaultBaseFeeChangeDenominator uint32 = 8
+	DefaultElasticityMultiplier     uint32 = 2
 )
 
 // Parameter keys
@@ -90,8 +93,8 @@ func NewParams(
 func DefaultParams() Params {
 	return Params{
 		NoBaseFee:                DefaultNoBaseFee,
-		BaseFeeChangeDenominator: params.BaseFeeChangeDenominator,
-		ElasticityMultiplier:     params.ElasticityMultiplier,
+		BaseFeeChangeDenominator: DefaultBaseFeeChangeDenominator,
+		ElasticityMultiplier:     DefaultElasticityMultiplier,
 		BaseFee:                  sdkmath.NewIntFromUint64(params.InitialBaseFee),
 		EnableHeight:             DefaultEnableHeight,
 		MinGasPrice:              DefaultMinGasPrice,

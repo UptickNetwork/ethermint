@@ -5,8 +5,6 @@ import (
 	"github.com/ethereum/go-ethereum/core/vm"
 )
 
-var _ core.Message = (*Message)(nil)
-
 // Options for the EVM module
 type Options struct {
 	CanTransfer vm.CanTransferFunc
@@ -21,7 +19,7 @@ func DefaultOptions() Options {
 	}
 }
 
-// Message wrap the core.Message interface.
+// Message wraps core.Message and carries fee payer metadata.
 type Message struct {
 	core.Message
 	FeePayer string
