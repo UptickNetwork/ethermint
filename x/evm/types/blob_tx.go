@@ -143,6 +143,11 @@ func (tx *BlobTx) GetBlobHashes() []common.Hash {
 	return out
 }
 
+// GetSetCodeAuthorizations returns nil for non-setcode transactions.
+func (tx *BlobTx) GetSetCodeAuthorizations() []ethtypes.SetCodeAuthorization {
+	return nil
+}
+
 func (tx *BlobTx) GetValue() *big.Int {
 	if tx.Amount == nil {
 		return nil

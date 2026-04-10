@@ -5242,6 +5242,2030 @@ func (x *fastReflection_BlobTx) ProtoMethods() *protoiface.Methods {
 }
 
 var (
+	md_SetCodeAuthorization          protoreflect.MessageDescriptor
+	fd_SetCodeAuthorization_chain_id protoreflect.FieldDescriptor
+	fd_SetCodeAuthorization_address  protoreflect.FieldDescriptor
+	fd_SetCodeAuthorization_nonce    protoreflect.FieldDescriptor
+	fd_SetCodeAuthorization_v        protoreflect.FieldDescriptor
+	fd_SetCodeAuthorization_r        protoreflect.FieldDescriptor
+	fd_SetCodeAuthorization_s        protoreflect.FieldDescriptor
+)
+
+func init() {
+	file_ethermint_evm_v1_tx_proto_init()
+	md_SetCodeAuthorization = File_ethermint_evm_v1_tx_proto.Messages().ByName("SetCodeAuthorization")
+	fd_SetCodeAuthorization_chain_id = md_SetCodeAuthorization.Fields().ByName("chain_id")
+	fd_SetCodeAuthorization_address = md_SetCodeAuthorization.Fields().ByName("address")
+	fd_SetCodeAuthorization_nonce = md_SetCodeAuthorization.Fields().ByName("nonce")
+	fd_SetCodeAuthorization_v = md_SetCodeAuthorization.Fields().ByName("v")
+	fd_SetCodeAuthorization_r = md_SetCodeAuthorization.Fields().ByName("r")
+	fd_SetCodeAuthorization_s = md_SetCodeAuthorization.Fields().ByName("s")
+}
+
+var _ protoreflect.Message = (*fastReflection_SetCodeAuthorization)(nil)
+
+type fastReflection_SetCodeAuthorization SetCodeAuthorization
+
+func (x *SetCodeAuthorization) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_SetCodeAuthorization)(x)
+}
+
+func (x *SetCodeAuthorization) slowProtoReflect() protoreflect.Message {
+	mi := &file_ethermint_evm_v1_tx_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_SetCodeAuthorization_messageType fastReflection_SetCodeAuthorization_messageType
+var _ protoreflect.MessageType = fastReflection_SetCodeAuthorization_messageType{}
+
+type fastReflection_SetCodeAuthorization_messageType struct{}
+
+func (x fastReflection_SetCodeAuthorization_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_SetCodeAuthorization)(nil)
+}
+func (x fastReflection_SetCodeAuthorization_messageType) New() protoreflect.Message {
+	return new(fastReflection_SetCodeAuthorization)
+}
+func (x fastReflection_SetCodeAuthorization_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_SetCodeAuthorization
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_SetCodeAuthorization) Descriptor() protoreflect.MessageDescriptor {
+	return md_SetCodeAuthorization
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_SetCodeAuthorization) Type() protoreflect.MessageType {
+	return _fastReflection_SetCodeAuthorization_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_SetCodeAuthorization) New() protoreflect.Message {
+	return new(fastReflection_SetCodeAuthorization)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_SetCodeAuthorization) Interface() protoreflect.ProtoMessage {
+	return (*SetCodeAuthorization)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_SetCodeAuthorization) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.ChainId != "" {
+		value := protoreflect.ValueOfString(x.ChainId)
+		if !f(fd_SetCodeAuthorization_chain_id, value) {
+			return
+		}
+	}
+	if x.Address != "" {
+		value := protoreflect.ValueOfString(x.Address)
+		if !f(fd_SetCodeAuthorization_address, value) {
+			return
+		}
+	}
+	if x.Nonce != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.Nonce)
+		if !f(fd_SetCodeAuthorization_nonce, value) {
+			return
+		}
+	}
+	if x.V != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.V)
+		if !f(fd_SetCodeAuthorization_v, value) {
+			return
+		}
+	}
+	if len(x.R) != 0 {
+		value := protoreflect.ValueOfBytes(x.R)
+		if !f(fd_SetCodeAuthorization_r, value) {
+			return
+		}
+	}
+	if len(x.S) != 0 {
+		value := protoreflect.ValueOfBytes(x.S)
+		if !f(fd_SetCodeAuthorization_s, value) {
+			return
+		}
+	}
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_SetCodeAuthorization) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	case "ethermint.evm.v1.SetCodeAuthorization.chain_id":
+		return x.ChainId != ""
+	case "ethermint.evm.v1.SetCodeAuthorization.address":
+		return x.Address != ""
+	case "ethermint.evm.v1.SetCodeAuthorization.nonce":
+		return x.Nonce != uint64(0)
+	case "ethermint.evm.v1.SetCodeAuthorization.v":
+		return x.V != uint64(0)
+	case "ethermint.evm.v1.SetCodeAuthorization.r":
+		return len(x.R) != 0
+	case "ethermint.evm.v1.SetCodeAuthorization.s":
+		return len(x.S) != 0
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: ethermint.evm.v1.SetCodeAuthorization"))
+		}
+		panic(fmt.Errorf("message ethermint.evm.v1.SetCodeAuthorization does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_SetCodeAuthorization) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	case "ethermint.evm.v1.SetCodeAuthorization.chain_id":
+		x.ChainId = ""
+	case "ethermint.evm.v1.SetCodeAuthorization.address":
+		x.Address = ""
+	case "ethermint.evm.v1.SetCodeAuthorization.nonce":
+		x.Nonce = uint64(0)
+	case "ethermint.evm.v1.SetCodeAuthorization.v":
+		x.V = uint64(0)
+	case "ethermint.evm.v1.SetCodeAuthorization.r":
+		x.R = nil
+	case "ethermint.evm.v1.SetCodeAuthorization.s":
+		x.S = nil
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: ethermint.evm.v1.SetCodeAuthorization"))
+		}
+		panic(fmt.Errorf("message ethermint.evm.v1.SetCodeAuthorization does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_SetCodeAuthorization) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	case "ethermint.evm.v1.SetCodeAuthorization.chain_id":
+		value := x.ChainId
+		return protoreflect.ValueOfString(value)
+	case "ethermint.evm.v1.SetCodeAuthorization.address":
+		value := x.Address
+		return protoreflect.ValueOfString(value)
+	case "ethermint.evm.v1.SetCodeAuthorization.nonce":
+		value := x.Nonce
+		return protoreflect.ValueOfUint64(value)
+	case "ethermint.evm.v1.SetCodeAuthorization.v":
+		value := x.V
+		return protoreflect.ValueOfUint64(value)
+	case "ethermint.evm.v1.SetCodeAuthorization.r":
+		value := x.R
+		return protoreflect.ValueOfBytes(value)
+	case "ethermint.evm.v1.SetCodeAuthorization.s":
+		value := x.S
+		return protoreflect.ValueOfBytes(value)
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: ethermint.evm.v1.SetCodeAuthorization"))
+		}
+		panic(fmt.Errorf("message ethermint.evm.v1.SetCodeAuthorization does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_SetCodeAuthorization) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	case "ethermint.evm.v1.SetCodeAuthorization.chain_id":
+		x.ChainId = value.Interface().(string)
+	case "ethermint.evm.v1.SetCodeAuthorization.address":
+		x.Address = value.Interface().(string)
+	case "ethermint.evm.v1.SetCodeAuthorization.nonce":
+		x.Nonce = value.Uint()
+	case "ethermint.evm.v1.SetCodeAuthorization.v":
+		x.V = value.Uint()
+	case "ethermint.evm.v1.SetCodeAuthorization.r":
+		x.R = value.Bytes()
+	case "ethermint.evm.v1.SetCodeAuthorization.s":
+		x.S = value.Bytes()
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: ethermint.evm.v1.SetCodeAuthorization"))
+		}
+		panic(fmt.Errorf("message ethermint.evm.v1.SetCodeAuthorization does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_SetCodeAuthorization) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "ethermint.evm.v1.SetCodeAuthorization.chain_id":
+		panic(fmt.Errorf("field chain_id of message ethermint.evm.v1.SetCodeAuthorization is not mutable"))
+	case "ethermint.evm.v1.SetCodeAuthorization.address":
+		panic(fmt.Errorf("field address of message ethermint.evm.v1.SetCodeAuthorization is not mutable"))
+	case "ethermint.evm.v1.SetCodeAuthorization.nonce":
+		panic(fmt.Errorf("field nonce of message ethermint.evm.v1.SetCodeAuthorization is not mutable"))
+	case "ethermint.evm.v1.SetCodeAuthorization.v":
+		panic(fmt.Errorf("field v of message ethermint.evm.v1.SetCodeAuthorization is not mutable"))
+	case "ethermint.evm.v1.SetCodeAuthorization.r":
+		panic(fmt.Errorf("field r of message ethermint.evm.v1.SetCodeAuthorization is not mutable"))
+	case "ethermint.evm.v1.SetCodeAuthorization.s":
+		panic(fmt.Errorf("field s of message ethermint.evm.v1.SetCodeAuthorization is not mutable"))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: ethermint.evm.v1.SetCodeAuthorization"))
+		}
+		panic(fmt.Errorf("message ethermint.evm.v1.SetCodeAuthorization does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_SetCodeAuthorization) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "ethermint.evm.v1.SetCodeAuthorization.chain_id":
+		return protoreflect.ValueOfString("")
+	case "ethermint.evm.v1.SetCodeAuthorization.address":
+		return protoreflect.ValueOfString("")
+	case "ethermint.evm.v1.SetCodeAuthorization.nonce":
+		return protoreflect.ValueOfUint64(uint64(0))
+	case "ethermint.evm.v1.SetCodeAuthorization.v":
+		return protoreflect.ValueOfUint64(uint64(0))
+	case "ethermint.evm.v1.SetCodeAuthorization.r":
+		return protoreflect.ValueOfBytes(nil)
+	case "ethermint.evm.v1.SetCodeAuthorization.s":
+		return protoreflect.ValueOfBytes(nil)
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: ethermint.evm.v1.SetCodeAuthorization"))
+		}
+		panic(fmt.Errorf("message ethermint.evm.v1.SetCodeAuthorization does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_SetCodeAuthorization) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in ethermint.evm.v1.SetCodeAuthorization", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_SetCodeAuthorization) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_SetCodeAuthorization) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_SetCodeAuthorization) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_SetCodeAuthorization) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*SetCodeAuthorization)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		l = len(x.ChainId)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.Address)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.Nonce != 0 {
+			n += 1 + runtime.Sov(uint64(x.Nonce))
+		}
+		if x.V != 0 {
+			n += 1 + runtime.Sov(uint64(x.V))
+		}
+		l = len(x.R)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.S)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*SetCodeAuthorization)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if len(x.S) > 0 {
+			i -= len(x.S)
+			copy(dAtA[i:], x.S)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.S)))
+			i--
+			dAtA[i] = 0x32
+		}
+		if len(x.R) > 0 {
+			i -= len(x.R)
+			copy(dAtA[i:], x.R)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.R)))
+			i--
+			dAtA[i] = 0x2a
+		}
+		if x.V != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.V))
+			i--
+			dAtA[i] = 0x20
+		}
+		if x.Nonce != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.Nonce))
+			i--
+			dAtA[i] = 0x18
+		}
+		if len(x.Address) > 0 {
+			i -= len(x.Address)
+			copy(dAtA[i:], x.Address)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.Address)))
+			i--
+			dAtA[i] = 0x12
+		}
+		if len(x.ChainId) > 0 {
+			i -= len(x.ChainId)
+			copy(dAtA[i:], x.ChainId)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.ChainId)))
+			i--
+			dAtA[i] = 0xa
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*SetCodeAuthorization)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: SetCodeAuthorization: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: SetCodeAuthorization: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			case 1:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ChainId", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.ChainId = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 2:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Address", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.Address = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 3:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Nonce", wireType)
+				}
+				x.Nonce = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.Nonce |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			case 4:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field V", wireType)
+				}
+				x.V = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.V |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			case 5:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field R", wireType)
+				}
+				var byteLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					byteLen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if byteLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + byteLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.R = append(x.R[:0], dAtA[iNdEx:postIndex]...)
+				if x.R == nil {
+					x.R = []byte{}
+				}
+				iNdEx = postIndex
+			case 6:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field S", wireType)
+				}
+				var byteLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					byteLen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if byteLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + byteLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.S = append(x.S[:0], dAtA[iNdEx:postIndex]...)
+				if x.S == nil {
+					x.S = []byte{}
+				}
+				iNdEx = postIndex
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
+var _ protoreflect.List = (*_SetCodeTx_9_list)(nil)
+
+type _SetCodeTx_9_list struct {
+	list *[]*AccessTuple
+}
+
+func (x *_SetCodeTx_9_list) Len() int {
+	if x.list == nil {
+		return 0
+	}
+	return len(*x.list)
+}
+
+func (x *_SetCodeTx_9_list) Get(i int) protoreflect.Value {
+	return protoreflect.ValueOfMessage((*x.list)[i].ProtoReflect())
+}
+
+func (x *_SetCodeTx_9_list) Set(i int, value protoreflect.Value) {
+	valueUnwrapped := value.Message()
+	concreteValue := valueUnwrapped.Interface().(*AccessTuple)
+	(*x.list)[i] = concreteValue
+}
+
+func (x *_SetCodeTx_9_list) Append(value protoreflect.Value) {
+	valueUnwrapped := value.Message()
+	concreteValue := valueUnwrapped.Interface().(*AccessTuple)
+	*x.list = append(*x.list, concreteValue)
+}
+
+func (x *_SetCodeTx_9_list) AppendMutable() protoreflect.Value {
+	v := new(AccessTuple)
+	*x.list = append(*x.list, v)
+	return protoreflect.ValueOfMessage(v.ProtoReflect())
+}
+
+func (x *_SetCodeTx_9_list) Truncate(n int) {
+	for i := n; i < len(*x.list); i++ {
+		(*x.list)[i] = nil
+	}
+	*x.list = (*x.list)[:n]
+}
+
+func (x *_SetCodeTx_9_list) NewElement() protoreflect.Value {
+	v := new(AccessTuple)
+	return protoreflect.ValueOfMessage(v.ProtoReflect())
+}
+
+func (x *_SetCodeTx_9_list) IsValid() bool {
+	return x.list != nil
+}
+
+var _ protoreflect.List = (*_SetCodeTx_10_list)(nil)
+
+type _SetCodeTx_10_list struct {
+	list *[]*SetCodeAuthorization
+}
+
+func (x *_SetCodeTx_10_list) Len() int {
+	if x.list == nil {
+		return 0
+	}
+	return len(*x.list)
+}
+
+func (x *_SetCodeTx_10_list) Get(i int) protoreflect.Value {
+	return protoreflect.ValueOfMessage((*x.list)[i].ProtoReflect())
+}
+
+func (x *_SetCodeTx_10_list) Set(i int, value protoreflect.Value) {
+	valueUnwrapped := value.Message()
+	concreteValue := valueUnwrapped.Interface().(*SetCodeAuthorization)
+	(*x.list)[i] = concreteValue
+}
+
+func (x *_SetCodeTx_10_list) Append(value protoreflect.Value) {
+	valueUnwrapped := value.Message()
+	concreteValue := valueUnwrapped.Interface().(*SetCodeAuthorization)
+	*x.list = append(*x.list, concreteValue)
+}
+
+func (x *_SetCodeTx_10_list) AppendMutable() protoreflect.Value {
+	v := new(SetCodeAuthorization)
+	*x.list = append(*x.list, v)
+	return protoreflect.ValueOfMessage(v.ProtoReflect())
+}
+
+func (x *_SetCodeTx_10_list) Truncate(n int) {
+	for i := n; i < len(*x.list); i++ {
+		(*x.list)[i] = nil
+	}
+	*x.list = (*x.list)[:n]
+}
+
+func (x *_SetCodeTx_10_list) NewElement() protoreflect.Value {
+	v := new(SetCodeAuthorization)
+	return protoreflect.ValueOfMessage(v.ProtoReflect())
+}
+
+func (x *_SetCodeTx_10_list) IsValid() bool {
+	return x.list != nil
+}
+
+var (
+	md_SetCodeTx             protoreflect.MessageDescriptor
+	fd_SetCodeTx_chain_id    protoreflect.FieldDescriptor
+	fd_SetCodeTx_nonce       protoreflect.FieldDescriptor
+	fd_SetCodeTx_gas_tip_cap protoreflect.FieldDescriptor
+	fd_SetCodeTx_gas_fee_cap protoreflect.FieldDescriptor
+	fd_SetCodeTx_gas         protoreflect.FieldDescriptor
+	fd_SetCodeTx_to          protoreflect.FieldDescriptor
+	fd_SetCodeTx_value       protoreflect.FieldDescriptor
+	fd_SetCodeTx_data        protoreflect.FieldDescriptor
+	fd_SetCodeTx_accesses    protoreflect.FieldDescriptor
+	fd_SetCodeTx_auth_list   protoreflect.FieldDescriptor
+	fd_SetCodeTx_v           protoreflect.FieldDescriptor
+	fd_SetCodeTx_r           protoreflect.FieldDescriptor
+	fd_SetCodeTx_s           protoreflect.FieldDescriptor
+)
+
+func init() {
+	file_ethermint_evm_v1_tx_proto_init()
+	md_SetCodeTx = File_ethermint_evm_v1_tx_proto.Messages().ByName("SetCodeTx")
+	fd_SetCodeTx_chain_id = md_SetCodeTx.Fields().ByName("chain_id")
+	fd_SetCodeTx_nonce = md_SetCodeTx.Fields().ByName("nonce")
+	fd_SetCodeTx_gas_tip_cap = md_SetCodeTx.Fields().ByName("gas_tip_cap")
+	fd_SetCodeTx_gas_fee_cap = md_SetCodeTx.Fields().ByName("gas_fee_cap")
+	fd_SetCodeTx_gas = md_SetCodeTx.Fields().ByName("gas")
+	fd_SetCodeTx_to = md_SetCodeTx.Fields().ByName("to")
+	fd_SetCodeTx_value = md_SetCodeTx.Fields().ByName("value")
+	fd_SetCodeTx_data = md_SetCodeTx.Fields().ByName("data")
+	fd_SetCodeTx_accesses = md_SetCodeTx.Fields().ByName("accesses")
+	fd_SetCodeTx_auth_list = md_SetCodeTx.Fields().ByName("auth_list")
+	fd_SetCodeTx_v = md_SetCodeTx.Fields().ByName("v")
+	fd_SetCodeTx_r = md_SetCodeTx.Fields().ByName("r")
+	fd_SetCodeTx_s = md_SetCodeTx.Fields().ByName("s")
+}
+
+var _ protoreflect.Message = (*fastReflection_SetCodeTx)(nil)
+
+type fastReflection_SetCodeTx SetCodeTx
+
+func (x *SetCodeTx) ProtoReflect() protoreflect.Message {
+	return (*fastReflection_SetCodeTx)(x)
+}
+
+func (x *SetCodeTx) slowProtoReflect() protoreflect.Message {
+	mi := &file_ethermint_evm_v1_tx_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+var _fastReflection_SetCodeTx_messageType fastReflection_SetCodeTx_messageType
+var _ protoreflect.MessageType = fastReflection_SetCodeTx_messageType{}
+
+type fastReflection_SetCodeTx_messageType struct{}
+
+func (x fastReflection_SetCodeTx_messageType) Zero() protoreflect.Message {
+	return (*fastReflection_SetCodeTx)(nil)
+}
+func (x fastReflection_SetCodeTx_messageType) New() protoreflect.Message {
+	return new(fastReflection_SetCodeTx)
+}
+func (x fastReflection_SetCodeTx_messageType) Descriptor() protoreflect.MessageDescriptor {
+	return md_SetCodeTx
+}
+
+// Descriptor returns message descriptor, which contains only the protobuf
+// type information for the message.
+func (x *fastReflection_SetCodeTx) Descriptor() protoreflect.MessageDescriptor {
+	return md_SetCodeTx
+}
+
+// Type returns the message type, which encapsulates both Go and protobuf
+// type information. If the Go type information is not needed,
+// it is recommended that the message descriptor be used instead.
+func (x *fastReflection_SetCodeTx) Type() protoreflect.MessageType {
+	return _fastReflection_SetCodeTx_messageType
+}
+
+// New returns a newly allocated and mutable empty message.
+func (x *fastReflection_SetCodeTx) New() protoreflect.Message {
+	return new(fastReflection_SetCodeTx)
+}
+
+// Interface unwraps the message reflection interface and
+// returns the underlying ProtoMessage interface.
+func (x *fastReflection_SetCodeTx) Interface() protoreflect.ProtoMessage {
+	return (*SetCodeTx)(x)
+}
+
+// Range iterates over every populated field in an undefined order,
+// calling f for each field descriptor and value encountered.
+// Range returns immediately if f returns false.
+// While iterating, mutating operations may only be performed
+// on the current field descriptor.
+func (x *fastReflection_SetCodeTx) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.ChainId != "" {
+		value := protoreflect.ValueOfString(x.ChainId)
+		if !f(fd_SetCodeTx_chain_id, value) {
+			return
+		}
+	}
+	if x.Nonce != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.Nonce)
+		if !f(fd_SetCodeTx_nonce, value) {
+			return
+		}
+	}
+	if x.GasTipCap != "" {
+		value := protoreflect.ValueOfString(x.GasTipCap)
+		if !f(fd_SetCodeTx_gas_tip_cap, value) {
+			return
+		}
+	}
+	if x.GasFeeCap != "" {
+		value := protoreflect.ValueOfString(x.GasFeeCap)
+		if !f(fd_SetCodeTx_gas_fee_cap, value) {
+			return
+		}
+	}
+	if x.Gas != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.Gas)
+		if !f(fd_SetCodeTx_gas, value) {
+			return
+		}
+	}
+	if x.To != "" {
+		value := protoreflect.ValueOfString(x.To)
+		if !f(fd_SetCodeTx_to, value) {
+			return
+		}
+	}
+	if x.Value != "" {
+		value := protoreflect.ValueOfString(x.Value)
+		if !f(fd_SetCodeTx_value, value) {
+			return
+		}
+	}
+	if len(x.Data) != 0 {
+		value := protoreflect.ValueOfBytes(x.Data)
+		if !f(fd_SetCodeTx_data, value) {
+			return
+		}
+	}
+	if len(x.Accesses) != 0 {
+		value := protoreflect.ValueOfList(&_SetCodeTx_9_list{list: &x.Accesses})
+		if !f(fd_SetCodeTx_accesses, value) {
+			return
+		}
+	}
+	if len(x.AuthList) != 0 {
+		value := protoreflect.ValueOfList(&_SetCodeTx_10_list{list: &x.AuthList})
+		if !f(fd_SetCodeTx_auth_list, value) {
+			return
+		}
+	}
+	if len(x.V) != 0 {
+		value := protoreflect.ValueOfBytes(x.V)
+		if !f(fd_SetCodeTx_v, value) {
+			return
+		}
+	}
+	if len(x.R) != 0 {
+		value := protoreflect.ValueOfBytes(x.R)
+		if !f(fd_SetCodeTx_r, value) {
+			return
+		}
+	}
+	if len(x.S) != 0 {
+		value := protoreflect.ValueOfBytes(x.S)
+		if !f(fd_SetCodeTx_s, value) {
+			return
+		}
+	}
+}
+
+// Has reports whether a field is populated.
+//
+// Some fields have the property of nullability where it is possible to
+// distinguish between the default value of a field and whether the field
+// was explicitly populated with the default value. Singular message fields,
+// member fields of a oneof, and proto2 scalar fields are nullable. Such
+// fields are populated only if explicitly set.
+//
+// In other cases (aside from the nullable cases above),
+// a proto3 scalar field is populated if it contains a non-zero value, and
+// a repeated field is populated if it is non-empty.
+func (x *fastReflection_SetCodeTx) Has(fd protoreflect.FieldDescriptor) bool {
+	switch fd.FullName() {
+	case "ethermint.evm.v1.SetCodeTx.chain_id":
+		return x.ChainId != ""
+	case "ethermint.evm.v1.SetCodeTx.nonce":
+		return x.Nonce != uint64(0)
+	case "ethermint.evm.v1.SetCodeTx.gas_tip_cap":
+		return x.GasTipCap != ""
+	case "ethermint.evm.v1.SetCodeTx.gas_fee_cap":
+		return x.GasFeeCap != ""
+	case "ethermint.evm.v1.SetCodeTx.gas":
+		return x.Gas != uint64(0)
+	case "ethermint.evm.v1.SetCodeTx.to":
+		return x.To != ""
+	case "ethermint.evm.v1.SetCodeTx.value":
+		return x.Value != ""
+	case "ethermint.evm.v1.SetCodeTx.data":
+		return len(x.Data) != 0
+	case "ethermint.evm.v1.SetCodeTx.accesses":
+		return len(x.Accesses) != 0
+	case "ethermint.evm.v1.SetCodeTx.auth_list":
+		return len(x.AuthList) != 0
+	case "ethermint.evm.v1.SetCodeTx.v":
+		return len(x.V) != 0
+	case "ethermint.evm.v1.SetCodeTx.r":
+		return len(x.R) != 0
+	case "ethermint.evm.v1.SetCodeTx.s":
+		return len(x.S) != 0
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: ethermint.evm.v1.SetCodeTx"))
+		}
+		panic(fmt.Errorf("message ethermint.evm.v1.SetCodeTx does not contain field %s", fd.FullName()))
+	}
+}
+
+// Clear clears the field such that a subsequent Has call reports false.
+//
+// Clearing an extension field clears both the extension type and value
+// associated with the given field number.
+//
+// Clear is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_SetCodeTx) Clear(fd protoreflect.FieldDescriptor) {
+	switch fd.FullName() {
+	case "ethermint.evm.v1.SetCodeTx.chain_id":
+		x.ChainId = ""
+	case "ethermint.evm.v1.SetCodeTx.nonce":
+		x.Nonce = uint64(0)
+	case "ethermint.evm.v1.SetCodeTx.gas_tip_cap":
+		x.GasTipCap = ""
+	case "ethermint.evm.v1.SetCodeTx.gas_fee_cap":
+		x.GasFeeCap = ""
+	case "ethermint.evm.v1.SetCodeTx.gas":
+		x.Gas = uint64(0)
+	case "ethermint.evm.v1.SetCodeTx.to":
+		x.To = ""
+	case "ethermint.evm.v1.SetCodeTx.value":
+		x.Value = ""
+	case "ethermint.evm.v1.SetCodeTx.data":
+		x.Data = nil
+	case "ethermint.evm.v1.SetCodeTx.accesses":
+		x.Accesses = nil
+	case "ethermint.evm.v1.SetCodeTx.auth_list":
+		x.AuthList = nil
+	case "ethermint.evm.v1.SetCodeTx.v":
+		x.V = nil
+	case "ethermint.evm.v1.SetCodeTx.r":
+		x.R = nil
+	case "ethermint.evm.v1.SetCodeTx.s":
+		x.S = nil
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: ethermint.evm.v1.SetCodeTx"))
+		}
+		panic(fmt.Errorf("message ethermint.evm.v1.SetCodeTx does not contain field %s", fd.FullName()))
+	}
+}
+
+// Get retrieves the value for a field.
+//
+// For unpopulated scalars, it returns the default value, where
+// the default value of a bytes scalar is guaranteed to be a copy.
+// For unpopulated composite types, it returns an empty, read-only view
+// of the value; to obtain a mutable reference, use Mutable.
+func (x *fastReflection_SetCodeTx) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
+	switch descriptor.FullName() {
+	case "ethermint.evm.v1.SetCodeTx.chain_id":
+		value := x.ChainId
+		return protoreflect.ValueOfString(value)
+	case "ethermint.evm.v1.SetCodeTx.nonce":
+		value := x.Nonce
+		return protoreflect.ValueOfUint64(value)
+	case "ethermint.evm.v1.SetCodeTx.gas_tip_cap":
+		value := x.GasTipCap
+		return protoreflect.ValueOfString(value)
+	case "ethermint.evm.v1.SetCodeTx.gas_fee_cap":
+		value := x.GasFeeCap
+		return protoreflect.ValueOfString(value)
+	case "ethermint.evm.v1.SetCodeTx.gas":
+		value := x.Gas
+		return protoreflect.ValueOfUint64(value)
+	case "ethermint.evm.v1.SetCodeTx.to":
+		value := x.To
+		return protoreflect.ValueOfString(value)
+	case "ethermint.evm.v1.SetCodeTx.value":
+		value := x.Value
+		return protoreflect.ValueOfString(value)
+	case "ethermint.evm.v1.SetCodeTx.data":
+		value := x.Data
+		return protoreflect.ValueOfBytes(value)
+	case "ethermint.evm.v1.SetCodeTx.accesses":
+		if len(x.Accesses) == 0 {
+			return protoreflect.ValueOfList(&_SetCodeTx_9_list{})
+		}
+		listValue := &_SetCodeTx_9_list{list: &x.Accesses}
+		return protoreflect.ValueOfList(listValue)
+	case "ethermint.evm.v1.SetCodeTx.auth_list":
+		if len(x.AuthList) == 0 {
+			return protoreflect.ValueOfList(&_SetCodeTx_10_list{})
+		}
+		listValue := &_SetCodeTx_10_list{list: &x.AuthList}
+		return protoreflect.ValueOfList(listValue)
+	case "ethermint.evm.v1.SetCodeTx.v":
+		value := x.V
+		return protoreflect.ValueOfBytes(value)
+	case "ethermint.evm.v1.SetCodeTx.r":
+		value := x.R
+		return protoreflect.ValueOfBytes(value)
+	case "ethermint.evm.v1.SetCodeTx.s":
+		value := x.S
+		return protoreflect.ValueOfBytes(value)
+	default:
+		if descriptor.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: ethermint.evm.v1.SetCodeTx"))
+		}
+		panic(fmt.Errorf("message ethermint.evm.v1.SetCodeTx does not contain field %s", descriptor.FullName()))
+	}
+}
+
+// Set stores the value for a field.
+//
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType.
+// When setting a composite type, it is unspecified whether the stored value
+// aliases the source's memory in any way. If the composite value is an
+// empty, read-only value, then it panics.
+//
+// Set is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_SetCodeTx) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
+	switch fd.FullName() {
+	case "ethermint.evm.v1.SetCodeTx.chain_id":
+		x.ChainId = value.Interface().(string)
+	case "ethermint.evm.v1.SetCodeTx.nonce":
+		x.Nonce = value.Uint()
+	case "ethermint.evm.v1.SetCodeTx.gas_tip_cap":
+		x.GasTipCap = value.Interface().(string)
+	case "ethermint.evm.v1.SetCodeTx.gas_fee_cap":
+		x.GasFeeCap = value.Interface().(string)
+	case "ethermint.evm.v1.SetCodeTx.gas":
+		x.Gas = value.Uint()
+	case "ethermint.evm.v1.SetCodeTx.to":
+		x.To = value.Interface().(string)
+	case "ethermint.evm.v1.SetCodeTx.value":
+		x.Value = value.Interface().(string)
+	case "ethermint.evm.v1.SetCodeTx.data":
+		x.Data = value.Bytes()
+	case "ethermint.evm.v1.SetCodeTx.accesses":
+		lv := value.List()
+		clv := lv.(*_SetCodeTx_9_list)
+		x.Accesses = *clv.list
+	case "ethermint.evm.v1.SetCodeTx.auth_list":
+		lv := value.List()
+		clv := lv.(*_SetCodeTx_10_list)
+		x.AuthList = *clv.list
+	case "ethermint.evm.v1.SetCodeTx.v":
+		x.V = value.Bytes()
+	case "ethermint.evm.v1.SetCodeTx.r":
+		x.R = value.Bytes()
+	case "ethermint.evm.v1.SetCodeTx.s":
+		x.S = value.Bytes()
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: ethermint.evm.v1.SetCodeTx"))
+		}
+		panic(fmt.Errorf("message ethermint.evm.v1.SetCodeTx does not contain field %s", fd.FullName()))
+	}
+}
+
+// Mutable returns a mutable reference to a composite type.
+//
+// If the field is unpopulated, it may allocate a composite value.
+// For a field belonging to a oneof, it implicitly clears any other field
+// that may be currently set within the same oneof.
+// For extension fields, it implicitly stores the provided ExtensionType
+// if not already stored.
+// It panics if the field does not contain a composite type.
+//
+// Mutable is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_SetCodeTx) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "ethermint.evm.v1.SetCodeTx.accesses":
+		if x.Accesses == nil {
+			x.Accesses = []*AccessTuple{}
+		}
+		value := &_SetCodeTx_9_list{list: &x.Accesses}
+		return protoreflect.ValueOfList(value)
+	case "ethermint.evm.v1.SetCodeTx.auth_list":
+		if x.AuthList == nil {
+			x.AuthList = []*SetCodeAuthorization{}
+		}
+		value := &_SetCodeTx_10_list{list: &x.AuthList}
+		return protoreflect.ValueOfList(value)
+	case "ethermint.evm.v1.SetCodeTx.chain_id":
+		panic(fmt.Errorf("field chain_id of message ethermint.evm.v1.SetCodeTx is not mutable"))
+	case "ethermint.evm.v1.SetCodeTx.nonce":
+		panic(fmt.Errorf("field nonce of message ethermint.evm.v1.SetCodeTx is not mutable"))
+	case "ethermint.evm.v1.SetCodeTx.gas_tip_cap":
+		panic(fmt.Errorf("field gas_tip_cap of message ethermint.evm.v1.SetCodeTx is not mutable"))
+	case "ethermint.evm.v1.SetCodeTx.gas_fee_cap":
+		panic(fmt.Errorf("field gas_fee_cap of message ethermint.evm.v1.SetCodeTx is not mutable"))
+	case "ethermint.evm.v1.SetCodeTx.gas":
+		panic(fmt.Errorf("field gas of message ethermint.evm.v1.SetCodeTx is not mutable"))
+	case "ethermint.evm.v1.SetCodeTx.to":
+		panic(fmt.Errorf("field to of message ethermint.evm.v1.SetCodeTx is not mutable"))
+	case "ethermint.evm.v1.SetCodeTx.value":
+		panic(fmt.Errorf("field value of message ethermint.evm.v1.SetCodeTx is not mutable"))
+	case "ethermint.evm.v1.SetCodeTx.data":
+		panic(fmt.Errorf("field data of message ethermint.evm.v1.SetCodeTx is not mutable"))
+	case "ethermint.evm.v1.SetCodeTx.v":
+		panic(fmt.Errorf("field v of message ethermint.evm.v1.SetCodeTx is not mutable"))
+	case "ethermint.evm.v1.SetCodeTx.r":
+		panic(fmt.Errorf("field r of message ethermint.evm.v1.SetCodeTx is not mutable"))
+	case "ethermint.evm.v1.SetCodeTx.s":
+		panic(fmt.Errorf("field s of message ethermint.evm.v1.SetCodeTx is not mutable"))
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: ethermint.evm.v1.SetCodeTx"))
+		}
+		panic(fmt.Errorf("message ethermint.evm.v1.SetCodeTx does not contain field %s", fd.FullName()))
+	}
+}
+
+// NewField returns a new value that is assignable to the field
+// for the given descriptor. For scalars, this returns the default value.
+// For lists, maps, and messages, this returns a new, empty, mutable value.
+func (x *fastReflection_SetCodeTx) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
+	switch fd.FullName() {
+	case "ethermint.evm.v1.SetCodeTx.chain_id":
+		return protoreflect.ValueOfString("")
+	case "ethermint.evm.v1.SetCodeTx.nonce":
+		return protoreflect.ValueOfUint64(uint64(0))
+	case "ethermint.evm.v1.SetCodeTx.gas_tip_cap":
+		return protoreflect.ValueOfString("")
+	case "ethermint.evm.v1.SetCodeTx.gas_fee_cap":
+		return protoreflect.ValueOfString("")
+	case "ethermint.evm.v1.SetCodeTx.gas":
+		return protoreflect.ValueOfUint64(uint64(0))
+	case "ethermint.evm.v1.SetCodeTx.to":
+		return protoreflect.ValueOfString("")
+	case "ethermint.evm.v1.SetCodeTx.value":
+		return protoreflect.ValueOfString("")
+	case "ethermint.evm.v1.SetCodeTx.data":
+		return protoreflect.ValueOfBytes(nil)
+	case "ethermint.evm.v1.SetCodeTx.accesses":
+		list := []*AccessTuple{}
+		return protoreflect.ValueOfList(&_SetCodeTx_9_list{list: &list})
+	case "ethermint.evm.v1.SetCodeTx.auth_list":
+		list := []*SetCodeAuthorization{}
+		return protoreflect.ValueOfList(&_SetCodeTx_10_list{list: &list})
+	case "ethermint.evm.v1.SetCodeTx.v":
+		return protoreflect.ValueOfBytes(nil)
+	case "ethermint.evm.v1.SetCodeTx.r":
+		return protoreflect.ValueOfBytes(nil)
+	case "ethermint.evm.v1.SetCodeTx.s":
+		return protoreflect.ValueOfBytes(nil)
+	default:
+		if fd.IsExtension() {
+			panic(fmt.Errorf("proto3 declared messages do not support extensions: ethermint.evm.v1.SetCodeTx"))
+		}
+		panic(fmt.Errorf("message ethermint.evm.v1.SetCodeTx does not contain field %s", fd.FullName()))
+	}
+}
+
+// WhichOneof reports which field within the oneof is populated,
+// returning nil if none are populated.
+// It panics if the oneof descriptor does not belong to this message.
+func (x *fastReflection_SetCodeTx) WhichOneof(d protoreflect.OneofDescriptor) protoreflect.FieldDescriptor {
+	switch d.FullName() {
+	default:
+		panic(fmt.Errorf("%s is not a oneof field in ethermint.evm.v1.SetCodeTx", d.FullName()))
+	}
+	panic("unreachable")
+}
+
+// GetUnknown retrieves the entire list of unknown fields.
+// The caller may only mutate the contents of the RawFields
+// if the mutated bytes are stored back into the message with SetUnknown.
+func (x *fastReflection_SetCodeTx) GetUnknown() protoreflect.RawFields {
+	return x.unknownFields
+}
+
+// SetUnknown stores an entire list of unknown fields.
+// The raw fields must be syntactically valid according to the wire format.
+// An implementation may panic if this is not the case.
+// Once stored, the caller must not mutate the content of the RawFields.
+// An empty RawFields may be passed to clear the fields.
+//
+// SetUnknown is a mutating operation and unsafe for concurrent use.
+func (x *fastReflection_SetCodeTx) SetUnknown(fields protoreflect.RawFields) {
+	x.unknownFields = fields
+}
+
+// IsValid reports whether the message is valid.
+//
+// An invalid message is an empty, read-only value.
+//
+// An invalid message often corresponds to a nil pointer of the concrete
+// message type, but the details are implementation dependent.
+// Validity is not part of the protobuf data model, and may not
+// be preserved in marshaling or other operations.
+func (x *fastReflection_SetCodeTx) IsValid() bool {
+	return x != nil
+}
+
+// ProtoMethods returns optional fastReflectionFeature-path implementations of various operations.
+// This method may return nil.
+//
+// The returned methods type is identical to
+// "google.golang.org/protobuf/runtime/protoiface".Methods.
+// Consult the protoiface package documentation for details.
+func (x *fastReflection_SetCodeTx) ProtoMethods() *protoiface.Methods {
+	size := func(input protoiface.SizeInput) protoiface.SizeOutput {
+		x := input.Message.Interface().(*SetCodeTx)
+		if x == nil {
+			return protoiface.SizeOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Size:              0,
+			}
+		}
+		options := runtime.SizeInputToOptions(input)
+		_ = options
+		var n int
+		var l int
+		_ = l
+		l = len(x.ChainId)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.Nonce != 0 {
+			n += 1 + runtime.Sov(uint64(x.Nonce))
+		}
+		l = len(x.GasTipCap)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.GasFeeCap)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.Gas != 0 {
+			n += 1 + runtime.Sov(uint64(x.Gas))
+		}
+		l = len(x.To)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.Value)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.Data)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if len(x.Accesses) > 0 {
+			for _, e := range x.Accesses {
+				l = options.Size(e)
+				n += 1 + l + runtime.Sov(uint64(l))
+			}
+		}
+		if len(x.AuthList) > 0 {
+			for _, e := range x.AuthList {
+				l = options.Size(e)
+				n += 1 + l + runtime.Sov(uint64(l))
+			}
+		}
+		l = len(x.V)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.R)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.S)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.unknownFields != nil {
+			n += len(x.unknownFields)
+		}
+		return protoiface.SizeOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Size:              n,
+		}
+	}
+
+	marshal := func(input protoiface.MarshalInput) (protoiface.MarshalOutput, error) {
+		x := input.Message.Interface().(*SetCodeTx)
+		if x == nil {
+			return protoiface.MarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Buf:               input.Buf,
+			}, nil
+		}
+		options := runtime.MarshalInputToOptions(input)
+		_ = options
+		size := options.Size(x)
+		dAtA := make([]byte, size)
+		i := len(dAtA)
+		_ = i
+		var l int
+		_ = l
+		if x.unknownFields != nil {
+			i -= len(x.unknownFields)
+			copy(dAtA[i:], x.unknownFields)
+		}
+		if len(x.S) > 0 {
+			i -= len(x.S)
+			copy(dAtA[i:], x.S)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.S)))
+			i--
+			dAtA[i] = 0x6a
+		}
+		if len(x.R) > 0 {
+			i -= len(x.R)
+			copy(dAtA[i:], x.R)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.R)))
+			i--
+			dAtA[i] = 0x62
+		}
+		if len(x.V) > 0 {
+			i -= len(x.V)
+			copy(dAtA[i:], x.V)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.V)))
+			i--
+			dAtA[i] = 0x5a
+		}
+		if len(x.AuthList) > 0 {
+			for iNdEx := len(x.AuthList) - 1; iNdEx >= 0; iNdEx-- {
+				encoded, err := options.Marshal(x.AuthList[iNdEx])
+				if err != nil {
+					return protoiface.MarshalOutput{
+						NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+						Buf:               input.Buf,
+					}, err
+				}
+				i -= len(encoded)
+				copy(dAtA[i:], encoded)
+				i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+				i--
+				dAtA[i] = 0x52
+			}
+		}
+		if len(x.Accesses) > 0 {
+			for iNdEx := len(x.Accesses) - 1; iNdEx >= 0; iNdEx-- {
+				encoded, err := options.Marshal(x.Accesses[iNdEx])
+				if err != nil {
+					return protoiface.MarshalOutput{
+						NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+						Buf:               input.Buf,
+					}, err
+				}
+				i -= len(encoded)
+				copy(dAtA[i:], encoded)
+				i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+				i--
+				dAtA[i] = 0x4a
+			}
+		}
+		if len(x.Data) > 0 {
+			i -= len(x.Data)
+			copy(dAtA[i:], x.Data)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.Data)))
+			i--
+			dAtA[i] = 0x42
+		}
+		if len(x.Value) > 0 {
+			i -= len(x.Value)
+			copy(dAtA[i:], x.Value)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.Value)))
+			i--
+			dAtA[i] = 0x3a
+		}
+		if len(x.To) > 0 {
+			i -= len(x.To)
+			copy(dAtA[i:], x.To)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.To)))
+			i--
+			dAtA[i] = 0x32
+		}
+		if x.Gas != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.Gas))
+			i--
+			dAtA[i] = 0x28
+		}
+		if len(x.GasFeeCap) > 0 {
+			i -= len(x.GasFeeCap)
+			copy(dAtA[i:], x.GasFeeCap)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.GasFeeCap)))
+			i--
+			dAtA[i] = 0x22
+		}
+		if len(x.GasTipCap) > 0 {
+			i -= len(x.GasTipCap)
+			copy(dAtA[i:], x.GasTipCap)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.GasTipCap)))
+			i--
+			dAtA[i] = 0x1a
+		}
+		if x.Nonce != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.Nonce))
+			i--
+			dAtA[i] = 0x10
+		}
+		if len(x.ChainId) > 0 {
+			i -= len(x.ChainId)
+			copy(dAtA[i:], x.ChainId)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.ChainId)))
+			i--
+			dAtA[i] = 0xa
+		}
+		if input.Buf != nil {
+			input.Buf = append(input.Buf, dAtA...)
+		} else {
+			input.Buf = dAtA
+		}
+		return protoiface.MarshalOutput{
+			NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+			Buf:               input.Buf,
+		}, nil
+	}
+	unmarshal := func(input protoiface.UnmarshalInput) (protoiface.UnmarshalOutput, error) {
+		x := input.Message.Interface().(*SetCodeTx)
+		if x == nil {
+			return protoiface.UnmarshalOutput{
+				NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+				Flags:             input.Flags,
+			}, nil
+		}
+		options := runtime.UnmarshalInputToOptions(input)
+		_ = options
+		dAtA := input.Buf
+		l := len(dAtA)
+		iNdEx := 0
+		for iNdEx < l {
+			preIndex := iNdEx
+			var wire uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+				}
+				if iNdEx >= l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				wire |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			fieldNum := int32(wire >> 3)
+			wireType := int(wire & 0x7)
+			if wireType == 4 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: SetCodeTx: wiretype end group for non-group")
+			}
+			if fieldNum <= 0 {
+				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: SetCodeTx: illegal tag %d (wire type %d)", fieldNum, wire)
+			}
+			switch fieldNum {
+			case 1:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ChainId", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.ChainId = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 2:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Nonce", wireType)
+				}
+				x.Nonce = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.Nonce |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			case 3:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field GasTipCap", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.GasTipCap = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 4:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field GasFeeCap", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.GasFeeCap = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 5:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Gas", wireType)
+				}
+				x.Gas = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.Gas |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			case 6:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field To", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.To = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 7:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Value", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.Value = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 8:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Data", wireType)
+				}
+				var byteLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					byteLen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if byteLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + byteLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.Data = append(x.Data[:0], dAtA[iNdEx:postIndex]...)
+				if x.Data == nil {
+					x.Data = []byte{}
+				}
+				iNdEx = postIndex
+			case 9:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Accesses", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.Accesses = append(x.Accesses, &AccessTuple{})
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.Accesses[len(x.Accesses)-1]); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
+			case 10:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field AuthList", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.AuthList = append(x.AuthList, &SetCodeAuthorization{})
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.AuthList[len(x.AuthList)-1]); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
+			case 11:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field V", wireType)
+				}
+				var byteLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					byteLen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if byteLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + byteLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.V = append(x.V[:0], dAtA[iNdEx:postIndex]...)
+				if x.V == nil {
+					x.V = []byte{}
+				}
+				iNdEx = postIndex
+			case 12:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field R", wireType)
+				}
+				var byteLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					byteLen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if byteLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + byteLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.R = append(x.R[:0], dAtA[iNdEx:postIndex]...)
+				if x.R == nil {
+					x.R = []byte{}
+				}
+				iNdEx = postIndex
+			case 13:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field S", wireType)
+				}
+				var byteLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					byteLen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if byteLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + byteLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.S = append(x.S[:0], dAtA[iNdEx:postIndex]...)
+				if x.S == nil {
+					x.S = []byte{}
+				}
+				iNdEx = postIndex
+			default:
+				iNdEx = preIndex
+				skippy, err := runtime.Skip(dAtA[iNdEx:])
+				if err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				if (skippy < 0) || (iNdEx+skippy) < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if (iNdEx + skippy) > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if !options.DiscardUnknown {
+					x.unknownFields = append(x.unknownFields, dAtA[iNdEx:iNdEx+skippy]...)
+				}
+				iNdEx += skippy
+			}
+		}
+
+		if iNdEx > l {
+			return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+		}
+		return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, nil
+	}
+	return &protoiface.Methods{
+		NoUnkeyedLiterals: struct{}{},
+		Flags:             protoiface.SupportMarshalDeterministic | protoiface.SupportUnmarshalDiscardUnknown,
+		Size:              size,
+		Marshal:           marshal,
+		Unmarshal:         unmarshal,
+		Merge:             nil,
+		CheckInitialized:  nil,
+	}
+}
+
+var (
 	md_ExtensionOptionsEthereumTx protoreflect.MessageDescriptor
 )
 
@@ -5259,7 +7283,7 @@ func (x *ExtensionOptionsEthereumTx) ProtoReflect() protoreflect.Message {
 }
 
 func (x *ExtensionOptionsEthereumTx) slowProtoReflect() protoreflect.Message {
-	mi := &file_ethermint_evm_v1_tx_proto_msgTypes[5]
+	mi := &file_ethermint_evm_v1_tx_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -5676,7 +7700,7 @@ func (x *MsgEthereumTxResponse) ProtoReflect() protoreflect.Message {
 }
 
 func (x *MsgEthereumTxResponse) slowProtoReflect() protoreflect.Message {
-	mi := &file_ethermint_evm_v1_tx_proto_msgTypes[6]
+	mi := &file_ethermint_evm_v1_tx_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6355,7 +8379,7 @@ func (x *MsgUpdateParams) ProtoReflect() protoreflect.Message {
 }
 
 func (x *MsgUpdateParams) slowProtoReflect() protoreflect.Message {
-	mi := &file_ethermint_evm_v1_tx_proto_msgTypes[7]
+	mi := &file_ethermint_evm_v1_tx_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -6850,7 +8874,7 @@ func (x *MsgUpdateParamsResponse) ProtoReflect() protoreflect.Message {
 }
 
 func (x *MsgUpdateParamsResponse) slowProtoReflect() protoreflect.Message {
-	mi := &file_ethermint_evm_v1_tx_proto_msgTypes[8]
+	mi := &file_ethermint_evm_v1_tx_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -7804,6 +9828,233 @@ func (x *BlobTx) GetS() []byte {
 	return nil
 }
 
+// SetCodeAuthorization is the EIP-7702 authorization item.
+type SetCodeAuthorization struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// chain_id of the authorization domain.
+	ChainId string `protobuf:"bytes,1,opt,name=chain_id,json=chainId,proto3" json:"chain_id,omitempty"`
+	// address authorized to set code.
+	Address string `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
+	// account nonce used by the authorization.
+	Nonce uint64 `protobuf:"varint,3,opt,name=nonce,proto3" json:"nonce,omitempty"`
+	// y parity of the authorization signature.
+	V uint64 `protobuf:"varint,4,opt,name=v,proto3" json:"v,omitempty"`
+	// r value of the authorization signature.
+	R []byte `protobuf:"bytes,5,opt,name=r,proto3" json:"r,omitempty"`
+	// s value of the authorization signature.
+	S []byte `protobuf:"bytes,6,opt,name=s,proto3" json:"s,omitempty"`
+}
+
+func (x *SetCodeAuthorization) Reset() {
+	*x = SetCodeAuthorization{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_ethermint_evm_v1_tx_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SetCodeAuthorization) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetCodeAuthorization) ProtoMessage() {}
+
+// Deprecated: Use SetCodeAuthorization.ProtoReflect.Descriptor instead.
+func (*SetCodeAuthorization) Descriptor() ([]byte, []int) {
+	return file_ethermint_evm_v1_tx_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *SetCodeAuthorization) GetChainId() string {
+	if x != nil {
+		return x.ChainId
+	}
+	return ""
+}
+
+func (x *SetCodeAuthorization) GetAddress() string {
+	if x != nil {
+		return x.Address
+	}
+	return ""
+}
+
+func (x *SetCodeAuthorization) GetNonce() uint64 {
+	if x != nil {
+		return x.Nonce
+	}
+	return 0
+}
+
+func (x *SetCodeAuthorization) GetV() uint64 {
+	if x != nil {
+		return x.V
+	}
+	return 0
+}
+
+func (x *SetCodeAuthorization) GetR() []byte {
+	if x != nil {
+		return x.R
+	}
+	return nil
+}
+
+func (x *SetCodeAuthorization) GetS() []byte {
+	if x != nil {
+		return x.S
+	}
+	return nil
+}
+
+// SetCodeTx is the data of EIP-7702 setcode transactions.
+type SetCodeTx struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// chain_id of the destination EVM chain
+	ChainId string `protobuf:"bytes,1,opt,name=chain_id,json=chainId,proto3" json:"chain_id,omitempty"`
+	// nonce corresponds to the account nonce (transaction sequence).
+	Nonce uint64 `protobuf:"varint,2,opt,name=nonce,proto3" json:"nonce,omitempty"`
+	// gas_tip_cap defines the max value for the gas tip.
+	GasTipCap string `protobuf:"bytes,3,opt,name=gas_tip_cap,json=gasTipCap,proto3" json:"gas_tip_cap,omitempty"`
+	// gas_fee_cap defines the max value for the gas fee.
+	GasFeeCap string `protobuf:"bytes,4,opt,name=gas_fee_cap,json=gasFeeCap,proto3" json:"gas_fee_cap,omitempty"`
+	// gas defines the gas limit defined for the transaction.
+	Gas uint64 `protobuf:"varint,5,opt,name=gas,proto3" json:"gas,omitempty"`
+	// to is the recipient address in hex format.
+	To string `protobuf:"bytes,6,opt,name=to,proto3" json:"to,omitempty"`
+	// value defines the transaction amount.
+	Value string `protobuf:"bytes,7,opt,name=value,proto3" json:"value,omitempty"`
+	// data is the data payload bytes of the transaction.
+	Data []byte `protobuf:"bytes,8,opt,name=data,proto3" json:"data,omitempty"`
+	// accesses is an array of access tuples.
+	Accesses []*AccessTuple `protobuf:"bytes,9,rep,name=accesses,proto3" json:"accesses,omitempty"`
+	// auth_list is the EIP-7702 authorization list.
+	AuthList []*SetCodeAuthorization `protobuf:"bytes,10,rep,name=auth_list,json=authList,proto3" json:"auth_list,omitempty"`
+	// v defines the signature value.
+	V []byte `protobuf:"bytes,11,opt,name=v,proto3" json:"v,omitempty"`
+	// r defines the signature value.
+	R []byte `protobuf:"bytes,12,opt,name=r,proto3" json:"r,omitempty"`
+	// s defines the signature value.
+	S []byte `protobuf:"bytes,13,opt,name=s,proto3" json:"s,omitempty"`
+}
+
+func (x *SetCodeTx) Reset() {
+	*x = SetCodeTx{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_ethermint_evm_v1_tx_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *SetCodeTx) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetCodeTx) ProtoMessage() {}
+
+// Deprecated: Use SetCodeTx.ProtoReflect.Descriptor instead.
+func (*SetCodeTx) Descriptor() ([]byte, []int) {
+	return file_ethermint_evm_v1_tx_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *SetCodeTx) GetChainId() string {
+	if x != nil {
+		return x.ChainId
+	}
+	return ""
+}
+
+func (x *SetCodeTx) GetNonce() uint64 {
+	if x != nil {
+		return x.Nonce
+	}
+	return 0
+}
+
+func (x *SetCodeTx) GetGasTipCap() string {
+	if x != nil {
+		return x.GasTipCap
+	}
+	return ""
+}
+
+func (x *SetCodeTx) GetGasFeeCap() string {
+	if x != nil {
+		return x.GasFeeCap
+	}
+	return ""
+}
+
+func (x *SetCodeTx) GetGas() uint64 {
+	if x != nil {
+		return x.Gas
+	}
+	return 0
+}
+
+func (x *SetCodeTx) GetTo() string {
+	if x != nil {
+		return x.To
+	}
+	return ""
+}
+
+func (x *SetCodeTx) GetValue() string {
+	if x != nil {
+		return x.Value
+	}
+	return ""
+}
+
+func (x *SetCodeTx) GetData() []byte {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+func (x *SetCodeTx) GetAccesses() []*AccessTuple {
+	if x != nil {
+		return x.Accesses
+	}
+	return nil
+}
+
+func (x *SetCodeTx) GetAuthList() []*SetCodeAuthorization {
+	if x != nil {
+		return x.AuthList
+	}
+	return nil
+}
+
+func (x *SetCodeTx) GetV() []byte {
+	if x != nil {
+		return x.V
+	}
+	return nil
+}
+
+func (x *SetCodeTx) GetR() []byte {
+	if x != nil {
+		return x.R
+	}
+	return nil
+}
+
+func (x *SetCodeTx) GetS() []byte {
+	if x != nil {
+		return x.S
+	}
+	return nil
+}
+
 // ExtensionOptionsEthereumTx is an extension option for ethereum transactions
 type ExtensionOptionsEthereumTx struct {
 	state         protoimpl.MessageState
@@ -7814,7 +10065,7 @@ type ExtensionOptionsEthereumTx struct {
 func (x *ExtensionOptionsEthereumTx) Reset() {
 	*x = ExtensionOptionsEthereumTx{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ethermint_evm_v1_tx_proto_msgTypes[5]
+		mi := &file_ethermint_evm_v1_tx_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7828,7 +10079,7 @@ func (*ExtensionOptionsEthereumTx) ProtoMessage() {}
 
 // Deprecated: Use ExtensionOptionsEthereumTx.ProtoReflect.Descriptor instead.
 func (*ExtensionOptionsEthereumTx) Descriptor() ([]byte, []int) {
-	return file_ethermint_evm_v1_tx_proto_rawDescGZIP(), []int{5}
+	return file_ethermint_evm_v1_tx_proto_rawDescGZIP(), []int{7}
 }
 
 // MsgEthereumTxResponse defines the Msg/EthereumTx response type.
@@ -7856,7 +10107,7 @@ type MsgEthereumTxResponse struct {
 func (x *MsgEthereumTxResponse) Reset() {
 	*x = MsgEthereumTxResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ethermint_evm_v1_tx_proto_msgTypes[6]
+		mi := &file_ethermint_evm_v1_tx_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7870,7 +10121,7 @@ func (*MsgEthereumTxResponse) ProtoMessage() {}
 
 // Deprecated: Use MsgEthereumTxResponse.ProtoReflect.Descriptor instead.
 func (*MsgEthereumTxResponse) Descriptor() ([]byte, []int) {
-	return file_ethermint_evm_v1_tx_proto_rawDescGZIP(), []int{6}
+	return file_ethermint_evm_v1_tx_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *MsgEthereumTxResponse) GetHash() string {
@@ -7924,7 +10175,7 @@ type MsgUpdateParams struct {
 func (x *MsgUpdateParams) Reset() {
 	*x = MsgUpdateParams{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ethermint_evm_v1_tx_proto_msgTypes[7]
+		mi := &file_ethermint_evm_v1_tx_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7938,7 +10189,7 @@ func (*MsgUpdateParams) ProtoMessage() {}
 
 // Deprecated: Use MsgUpdateParams.ProtoReflect.Descriptor instead.
 func (*MsgUpdateParams) Descriptor() ([]byte, []int) {
-	return file_ethermint_evm_v1_tx_proto_rawDescGZIP(), []int{7}
+	return file_ethermint_evm_v1_tx_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *MsgUpdateParams) GetAuthority() string {
@@ -7966,7 +10217,7 @@ type MsgUpdateParamsResponse struct {
 func (x *MsgUpdateParamsResponse) Reset() {
 	*x = MsgUpdateParamsResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_ethermint_evm_v1_tx_proto_msgTypes[8]
+		mi := &file_ethermint_evm_v1_tx_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -7980,7 +10231,7 @@ func (*MsgUpdateParamsResponse) ProtoMessage() {}
 
 // Deprecated: Use MsgUpdateParamsResponse.ProtoReflect.Descriptor instead.
 func (*MsgUpdateParamsResponse) Descriptor() ([]byte, []int) {
-	return file_ethermint_evm_v1_tx_proto_rawDescGZIP(), []int{8}
+	return file_ethermint_evm_v1_tx_proto_rawDescGZIP(), []int{10}
 }
 
 var File_ethermint_evm_v1_tx_proto protoreflect.FileDescriptor
@@ -8128,57 +10379,107 @@ var file_ethermint_evm_v1_tx_proto_rawDesc = []byte{
 	0x0c, 0x52, 0x01, 0x76, 0x12, 0x0c, 0x0a, 0x01, 0x72, 0x18, 0x0d, 0x20, 0x01, 0x28, 0x0c, 0x52,
 	0x01, 0x72, 0x12, 0x0c, 0x0a, 0x01, 0x73, 0x18, 0x0e, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x01, 0x73,
 	0x3a, 0x0e, 0x88, 0xa0, 0x1f, 0x00, 0xca, 0xb4, 0x2d, 0x06, 0x54, 0x78, 0x44, 0x61, 0x74, 0x61,
-	0x22, 0x22, 0x0a, 0x1a, 0x45, 0x78, 0x74, 0x65, 0x6e, 0x73, 0x69, 0x6f, 0x6e, 0x4f, 0x70, 0x74,
-	0x69, 0x6f, 0x6e, 0x73, 0x45, 0x74, 0x68, 0x65, 0x72, 0x65, 0x75, 0x6d, 0x54, 0x78, 0x3a, 0x04,
-	0x88, 0xa0, 0x1f, 0x00, 0x22, 0xa4, 0x01, 0x0a, 0x15, 0x4d, 0x73, 0x67, 0x45, 0x74, 0x68, 0x65,
-	0x72, 0x65, 0x75, 0x6d, 0x54, 0x78, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x12,
-	0x0a, 0x04, 0x68, 0x61, 0x73, 0x68, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x68, 0x61,
-	0x73, 0x68, 0x12, 0x29, 0x0a, 0x04, 0x6c, 0x6f, 0x67, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b,
-	0x32, 0x15, 0x2e, 0x65, 0x74, 0x68, 0x65, 0x72, 0x6d, 0x69, 0x6e, 0x74, 0x2e, 0x65, 0x76, 0x6d,
-	0x2e, 0x76, 0x31, 0x2e, 0x4c, 0x6f, 0x67, 0x52, 0x04, 0x6c, 0x6f, 0x67, 0x73, 0x12, 0x10, 0x0a,
-	0x03, 0x72, 0x65, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x03, 0x72, 0x65, 0x74, 0x12,
-	0x19, 0x0a, 0x08, 0x76, 0x6d, 0x5f, 0x65, 0x72, 0x72, 0x6f, 0x72, 0x18, 0x04, 0x20, 0x01, 0x28,
-	0x09, 0x52, 0x07, 0x76, 0x6d, 0x45, 0x72, 0x72, 0x6f, 0x72, 0x12, 0x19, 0x0a, 0x08, 0x67, 0x61,
-	0x73, 0x5f, 0x75, 0x73, 0x65, 0x64, 0x18, 0x05, 0x20, 0x01, 0x28, 0x04, 0x52, 0x07, 0x67, 0x61,
-	0x73, 0x55, 0x73, 0x65, 0x64, 0x3a, 0x04, 0x88, 0xa0, 0x1f, 0x00, 0x22, 0x91, 0x01, 0x0a, 0x0f,
-	0x4d, 0x73, 0x67, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x12,
-	0x36, 0x0a, 0x09, 0x61, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x69, 0x74, 0x79, 0x18, 0x01, 0x20, 0x01,
-	0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41,
-	0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x09, 0x61, 0x75,
-	0x74, 0x68, 0x6f, 0x72, 0x69, 0x74, 0x79, 0x12, 0x36, 0x0a, 0x06, 0x70, 0x61, 0x72, 0x61, 0x6d,
-	0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x18, 0x2e, 0x65, 0x74, 0x68, 0x65, 0x72, 0x6d,
-	0x69, 0x6e, 0x74, 0x2e, 0x65, 0x76, 0x6d, 0x2e, 0x76, 0x31, 0x2e, 0x50, 0x61, 0x72, 0x61, 0x6d,
-	0x73, 0x42, 0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52, 0x06, 0x70, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x3a,
-	0x0e, 0x82, 0xe7, 0xb0, 0x2a, 0x09, 0x61, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x69, 0x74, 0x79, 0x22,
-	0x19, 0x0a, 0x17, 0x4d, 0x73, 0x67, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x50, 0x61, 0x72, 0x61,
-	0x6d, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x32, 0xe9, 0x01, 0x0a, 0x03, 0x4d,
-	0x73, 0x67, 0x12, 0x7d, 0x0a, 0x0a, 0x45, 0x74, 0x68, 0x65, 0x72, 0x65, 0x75, 0x6d, 0x54, 0x78,
-	0x12, 0x1f, 0x2e, 0x65, 0x74, 0x68, 0x65, 0x72, 0x6d, 0x69, 0x6e, 0x74, 0x2e, 0x65, 0x76, 0x6d,
-	0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x45, 0x74, 0x68, 0x65, 0x72, 0x65, 0x75, 0x6d, 0x54,
-	0x78, 0x1a, 0x27, 0x2e, 0x65, 0x74, 0x68, 0x65, 0x72, 0x6d, 0x69, 0x6e, 0x74, 0x2e, 0x65, 0x76,
-	0x6d, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x45, 0x74, 0x68, 0x65, 0x72, 0x65, 0x75, 0x6d,
-	0x54, 0x78, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x25, 0x82, 0xd3, 0xe4, 0x93,
-	0x02, 0x1f, 0x22, 0x1d, 0x2f, 0x65, 0x74, 0x68, 0x65, 0x72, 0x6d, 0x69, 0x6e, 0x74, 0x2f, 0x65,
-	0x76, 0x6d, 0x2f, 0x76, 0x31, 0x2f, 0x65, 0x74, 0x68, 0x65, 0x72, 0x65, 0x75, 0x6d, 0x5f, 0x74,
-	0x78, 0x12, 0x5c, 0x0a, 0x0c, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x50, 0x61, 0x72, 0x61, 0x6d,
-	0x73, 0x12, 0x21, 0x2e, 0x65, 0x74, 0x68, 0x65, 0x72, 0x6d, 0x69, 0x6e, 0x74, 0x2e, 0x65, 0x76,
-	0x6d, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x50, 0x61,
-	0x72, 0x61, 0x6d, 0x73, 0x1a, 0x29, 0x2e, 0x65, 0x74, 0x68, 0x65, 0x72, 0x6d, 0x69, 0x6e, 0x74,
-	0x2e, 0x65, 0x76, 0x6d, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x55, 0x70, 0x64, 0x61, 0x74,
-	0x65, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x1a,
-	0x05, 0x80, 0xe7, 0xb0, 0x2a, 0x01, 0x42, 0xb8, 0x01, 0x0a, 0x14, 0x63, 0x6f, 0x6d, 0x2e, 0x65,
-	0x74, 0x68, 0x65, 0x72, 0x6d, 0x69, 0x6e, 0x74, 0x2e, 0x65, 0x76, 0x6d, 0x2e, 0x76, 0x31, 0x42,
-	0x07, 0x54, 0x78, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01, 0x5a, 0x35, 0x67, 0x69, 0x74, 0x68,
-	0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x65, 0x76, 0x6d, 0x6f, 0x73, 0x2f, 0x65, 0x74, 0x68,
-	0x65, 0x72, 0x6d, 0x69, 0x6e, 0x74, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x65, 0x74, 0x68, 0x65, 0x72,
-	0x6d, 0x69, 0x6e, 0x74, 0x2f, 0x65, 0x76, 0x6d, 0x2f, 0x76, 0x31, 0x3b, 0x65, 0x76, 0x6d, 0x76,
-	0x31, 0xa2, 0x02, 0x03, 0x45, 0x45, 0x58, 0xaa, 0x02, 0x10, 0x45, 0x74, 0x68, 0x65, 0x72, 0x6d,
-	0x69, 0x6e, 0x74, 0x2e, 0x45, 0x76, 0x6d, 0x2e, 0x56, 0x31, 0xca, 0x02, 0x10, 0x45, 0x74, 0x68,
-	0x65, 0x72, 0x6d, 0x69, 0x6e, 0x74, 0x5c, 0x45, 0x76, 0x6d, 0x5c, 0x56, 0x31, 0xe2, 0x02, 0x1c,
-	0x45, 0x74, 0x68, 0x65, 0x72, 0x6d, 0x69, 0x6e, 0x74, 0x5c, 0x45, 0x76, 0x6d, 0x5c, 0x56, 0x31,
-	0x5c, 0x47, 0x50, 0x42, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0xea, 0x02, 0x12, 0x45,
-	0x74, 0x68, 0x65, 0x72, 0x6d, 0x69, 0x6e, 0x74, 0x3a, 0x3a, 0x45, 0x76, 0x6d, 0x3a, 0x3a, 0x56,
-	0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x22, 0xc2, 0x01, 0x0a, 0x14, 0x53, 0x65, 0x74, 0x43, 0x6f, 0x64, 0x65, 0x41, 0x75, 0x74, 0x68,
+	0x6f, 0x72, 0x69, 0x7a, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x4a, 0x0a, 0x08, 0x63, 0x68, 0x61,
+	0x69, 0x6e, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x2f, 0xda, 0xde, 0x1f,
+	0x15, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x73, 0x64, 0x6b, 0x2e, 0x69, 0x6f, 0x2f, 0x6d, 0x61,
+	0x74, 0x68, 0x2e, 0x49, 0x6e, 0x74, 0xe2, 0xde, 0x1f, 0x07, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x49,
+	0x44, 0xea, 0xde, 0x1f, 0x07, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x49, 0x44, 0x52, 0x07, 0x63, 0x68,
+	0x61, 0x69, 0x6e, 0x49, 0x64, 0x12, 0x18, 0x0a, 0x07, 0x61, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x61, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x12,
+	0x14, 0x0a, 0x05, 0x6e, 0x6f, 0x6e, 0x63, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x04, 0x52, 0x05,
+	0x6e, 0x6f, 0x6e, 0x63, 0x65, 0x12, 0x0c, 0x0a, 0x01, 0x76, 0x18, 0x04, 0x20, 0x01, 0x28, 0x04,
+	0x52, 0x01, 0x76, 0x12, 0x0c, 0x0a, 0x01, 0x72, 0x18, 0x05, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x01,
+	0x72, 0x12, 0x0c, 0x0a, 0x01, 0x73, 0x18, 0x06, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x01, 0x73, 0x3a,
+	0x04, 0x88, 0xa0, 0x1f, 0x00, 0x22, 0xd0, 0x04, 0x0a, 0x09, 0x53, 0x65, 0x74, 0x43, 0x6f, 0x64,
+	0x65, 0x54, 0x78, 0x12, 0x4a, 0x0a, 0x08, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x5f, 0x69, 0x64, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x2f, 0xda, 0xde, 0x1f, 0x15, 0x63, 0x6f, 0x73, 0x6d, 0x6f,
+	0x73, 0x73, 0x64, 0x6b, 0x2e, 0x69, 0x6f, 0x2f, 0x6d, 0x61, 0x74, 0x68, 0x2e, 0x49, 0x6e, 0x74,
+	0xe2, 0xde, 0x1f, 0x07, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x49, 0x44, 0xea, 0xde, 0x1f, 0x07, 0x63,
+	0x68, 0x61, 0x69, 0x6e, 0x49, 0x44, 0x52, 0x07, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x49, 0x64, 0x12,
+	0x14, 0x0a, 0x05, 0x6e, 0x6f, 0x6e, 0x63, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x04, 0x52, 0x05,
+	0x6e, 0x6f, 0x6e, 0x63, 0x65, 0x12, 0x39, 0x0a, 0x0b, 0x67, 0x61, 0x73, 0x5f, 0x74, 0x69, 0x70,
+	0x5f, 0x63, 0x61, 0x70, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x42, 0x19, 0xda, 0xde, 0x1f, 0x15,
+	0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x73, 0x64, 0x6b, 0x2e, 0x69, 0x6f, 0x2f, 0x6d, 0x61, 0x74,
+	0x68, 0x2e, 0x49, 0x6e, 0x74, 0x52, 0x09, 0x67, 0x61, 0x73, 0x54, 0x69, 0x70, 0x43, 0x61, 0x70,
+	0x12, 0x39, 0x0a, 0x0b, 0x67, 0x61, 0x73, 0x5f, 0x66, 0x65, 0x65, 0x5f, 0x63, 0x61, 0x70, 0x18,
+	0x04, 0x20, 0x01, 0x28, 0x09, 0x42, 0x19, 0xda, 0xde, 0x1f, 0x15, 0x63, 0x6f, 0x73, 0x6d, 0x6f,
+	0x73, 0x73, 0x64, 0x6b, 0x2e, 0x69, 0x6f, 0x2f, 0x6d, 0x61, 0x74, 0x68, 0x2e, 0x49, 0x6e, 0x74,
+	0x52, 0x09, 0x67, 0x61, 0x73, 0x46, 0x65, 0x65, 0x43, 0x61, 0x70, 0x12, 0x1e, 0x0a, 0x03, 0x67,
+	0x61, 0x73, 0x18, 0x05, 0x20, 0x01, 0x28, 0x04, 0x42, 0x0c, 0xe2, 0xde, 0x1f, 0x08, 0x47, 0x61,
+	0x73, 0x4c, 0x69, 0x6d, 0x69, 0x74, 0x52, 0x03, 0x67, 0x61, 0x73, 0x12, 0x0e, 0x0a, 0x02, 0x74,
+	0x6f, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x74, 0x6f, 0x12, 0x39, 0x0a, 0x05, 0x76,
+	0x61, 0x6c, 0x75, 0x65, 0x18, 0x07, 0x20, 0x01, 0x28, 0x09, 0x42, 0x23, 0xda, 0xde, 0x1f, 0x15,
+	0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x73, 0x64, 0x6b, 0x2e, 0x69, 0x6f, 0x2f, 0x6d, 0x61, 0x74,
+	0x68, 0x2e, 0x49, 0x6e, 0x74, 0xe2, 0xde, 0x1f, 0x06, 0x41, 0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x52,
+	0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x64, 0x61, 0x74, 0x61, 0x18, 0x08,
+	0x20, 0x01, 0x28, 0x0c, 0x52, 0x04, 0x64, 0x61, 0x74, 0x61, 0x12, 0x5b, 0x0a, 0x08, 0x61, 0x63,
+	0x63, 0x65, 0x73, 0x73, 0x65, 0x73, 0x18, 0x09, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x1d, 0x2e, 0x65,
+	0x74, 0x68, 0x65, 0x72, 0x6d, 0x69, 0x6e, 0x74, 0x2e, 0x65, 0x76, 0x6d, 0x2e, 0x76, 0x31, 0x2e,
+	0x41, 0x63, 0x63, 0x65, 0x73, 0x73, 0x54, 0x75, 0x70, 0x6c, 0x65, 0x42, 0x20, 0xc8, 0xde, 0x1f,
+	0x00, 0xea, 0xde, 0x1f, 0x0a, 0x61, 0x63, 0x63, 0x65, 0x73, 0x73, 0x4c, 0x69, 0x73, 0x74, 0xaa,
+	0xdf, 0x1f, 0x0a, 0x41, 0x63, 0x63, 0x65, 0x73, 0x73, 0x4c, 0x69, 0x73, 0x74, 0x52, 0x08, 0x61,
+	0x63, 0x63, 0x65, 0x73, 0x73, 0x65, 0x73, 0x12, 0x55, 0x0a, 0x09, 0x61, 0x75, 0x74, 0x68, 0x5f,
+	0x6c, 0x69, 0x73, 0x74, 0x18, 0x0a, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x26, 0x2e, 0x65, 0x74, 0x68,
+	0x65, 0x72, 0x6d, 0x69, 0x6e, 0x74, 0x2e, 0x65, 0x76, 0x6d, 0x2e, 0x76, 0x31, 0x2e, 0x53, 0x65,
+	0x74, 0x43, 0x6f, 0x64, 0x65, 0x41, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x69, 0x7a, 0x61, 0x74, 0x69,
+	0x6f, 0x6e, 0x42, 0x10, 0xc8, 0xde, 0x1f, 0x00, 0xea, 0xde, 0x1f, 0x08, 0x61, 0x75, 0x74, 0x68,
+	0x4c, 0x69, 0x73, 0x74, 0x52, 0x08, 0x61, 0x75, 0x74, 0x68, 0x4c, 0x69, 0x73, 0x74, 0x12, 0x0c,
+	0x0a, 0x01, 0x76, 0x18, 0x0b, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x01, 0x76, 0x12, 0x0c, 0x0a, 0x01,
+	0x72, 0x18, 0x0c, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x01, 0x72, 0x12, 0x0c, 0x0a, 0x01, 0x73, 0x18,
+	0x0d, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x01, 0x73, 0x3a, 0x0e, 0x88, 0xa0, 0x1f, 0x00, 0xca, 0xb4,
+	0x2d, 0x06, 0x54, 0x78, 0x44, 0x61, 0x74, 0x61, 0x22, 0x22, 0x0a, 0x1a, 0x45, 0x78, 0x74, 0x65,
+	0x6e, 0x73, 0x69, 0x6f, 0x6e, 0x4f, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x45, 0x74, 0x68, 0x65,
+	0x72, 0x65, 0x75, 0x6d, 0x54, 0x78, 0x3a, 0x04, 0x88, 0xa0, 0x1f, 0x00, 0x22, 0xa4, 0x01, 0x0a,
+	0x15, 0x4d, 0x73, 0x67, 0x45, 0x74, 0x68, 0x65, 0x72, 0x65, 0x75, 0x6d, 0x54, 0x78, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x68, 0x61, 0x73, 0x68, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x68, 0x61, 0x73, 0x68, 0x12, 0x29, 0x0a, 0x04, 0x6c, 0x6f,
+	0x67, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x15, 0x2e, 0x65, 0x74, 0x68, 0x65, 0x72,
+	0x6d, 0x69, 0x6e, 0x74, 0x2e, 0x65, 0x76, 0x6d, 0x2e, 0x76, 0x31, 0x2e, 0x4c, 0x6f, 0x67, 0x52,
+	0x04, 0x6c, 0x6f, 0x67, 0x73, 0x12, 0x10, 0x0a, 0x03, 0x72, 0x65, 0x74, 0x18, 0x03, 0x20, 0x01,
+	0x28, 0x0c, 0x52, 0x03, 0x72, 0x65, 0x74, 0x12, 0x19, 0x0a, 0x08, 0x76, 0x6d, 0x5f, 0x65, 0x72,
+	0x72, 0x6f, 0x72, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x76, 0x6d, 0x45, 0x72, 0x72,
+	0x6f, 0x72, 0x12, 0x19, 0x0a, 0x08, 0x67, 0x61, 0x73, 0x5f, 0x75, 0x73, 0x65, 0x64, 0x18, 0x05,
+	0x20, 0x01, 0x28, 0x04, 0x52, 0x07, 0x67, 0x61, 0x73, 0x55, 0x73, 0x65, 0x64, 0x3a, 0x04, 0x88,
+	0xa0, 0x1f, 0x00, 0x22, 0x91, 0x01, 0x0a, 0x0f, 0x4d, 0x73, 0x67, 0x55, 0x70, 0x64, 0x61, 0x74,
+	0x65, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x12, 0x36, 0x0a, 0x09, 0x61, 0x75, 0x74, 0x68, 0x6f,
+	0x72, 0x69, 0x74, 0x79, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x18, 0xd2, 0xb4, 0x2d, 0x14,
+	0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x41, 0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x53, 0x74,
+	0x72, 0x69, 0x6e, 0x67, 0x52, 0x09, 0x61, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x69, 0x74, 0x79, 0x12,
+	0x36, 0x0a, 0x06, 0x70, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32,
+	0x18, 0x2e, 0x65, 0x74, 0x68, 0x65, 0x72, 0x6d, 0x69, 0x6e, 0x74, 0x2e, 0x65, 0x76, 0x6d, 0x2e,
+	0x76, 0x31, 0x2e, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x42, 0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52,
+	0x06, 0x70, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x3a, 0x0e, 0x82, 0xe7, 0xb0, 0x2a, 0x09, 0x61, 0x75,
+	0x74, 0x68, 0x6f, 0x72, 0x69, 0x74, 0x79, 0x22, 0x19, 0x0a, 0x17, 0x4d, 0x73, 0x67, 0x55, 0x70,
+	0x64, 0x61, 0x74, 0x65, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x32, 0xe9, 0x01, 0x0a, 0x03, 0x4d, 0x73, 0x67, 0x12, 0x7d, 0x0a, 0x0a, 0x45, 0x74,
+	0x68, 0x65, 0x72, 0x65, 0x75, 0x6d, 0x54, 0x78, 0x12, 0x1f, 0x2e, 0x65, 0x74, 0x68, 0x65, 0x72,
+	0x6d, 0x69, 0x6e, 0x74, 0x2e, 0x65, 0x76, 0x6d, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67, 0x45,
+	0x74, 0x68, 0x65, 0x72, 0x65, 0x75, 0x6d, 0x54, 0x78, 0x1a, 0x27, 0x2e, 0x65, 0x74, 0x68, 0x65,
+	0x72, 0x6d, 0x69, 0x6e, 0x74, 0x2e, 0x65, 0x76, 0x6d, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67,
+	0x45, 0x74, 0x68, 0x65, 0x72, 0x65, 0x75, 0x6d, 0x54, 0x78, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x22, 0x25, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x1f, 0x22, 0x1d, 0x2f, 0x65, 0x74, 0x68,
+	0x65, 0x72, 0x6d, 0x69, 0x6e, 0x74, 0x2f, 0x65, 0x76, 0x6d, 0x2f, 0x76, 0x31, 0x2f, 0x65, 0x74,
+	0x68, 0x65, 0x72, 0x65, 0x75, 0x6d, 0x5f, 0x74, 0x78, 0x12, 0x5c, 0x0a, 0x0c, 0x55, 0x70, 0x64,
+	0x61, 0x74, 0x65, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x12, 0x21, 0x2e, 0x65, 0x74, 0x68, 0x65,
+	0x72, 0x6d, 0x69, 0x6e, 0x74, 0x2e, 0x65, 0x76, 0x6d, 0x2e, 0x76, 0x31, 0x2e, 0x4d, 0x73, 0x67,
+	0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x1a, 0x29, 0x2e, 0x65,
+	0x74, 0x68, 0x65, 0x72, 0x6d, 0x69, 0x6e, 0x74, 0x2e, 0x65, 0x76, 0x6d, 0x2e, 0x76, 0x31, 0x2e,
+	0x4d, 0x73, 0x67, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x1a, 0x05, 0x80, 0xe7, 0xb0, 0x2a, 0x01, 0x42, 0xb8,
+	0x01, 0x0a, 0x14, 0x63, 0x6f, 0x6d, 0x2e, 0x65, 0x74, 0x68, 0x65, 0x72, 0x6d, 0x69, 0x6e, 0x74,
+	0x2e, 0x65, 0x76, 0x6d, 0x2e, 0x76, 0x31, 0x42, 0x07, 0x54, 0x78, 0x50, 0x72, 0x6f, 0x74, 0x6f,
+	0x50, 0x01, 0x5a, 0x35, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x65,
+	0x76, 0x6d, 0x6f, 0x73, 0x2f, 0x65, 0x74, 0x68, 0x65, 0x72, 0x6d, 0x69, 0x6e, 0x74, 0x2f, 0x61,
+	0x70, 0x69, 0x2f, 0x65, 0x74, 0x68, 0x65, 0x72, 0x6d, 0x69, 0x6e, 0x74, 0x2f, 0x65, 0x76, 0x6d,
+	0x2f, 0x76, 0x31, 0x3b, 0x65, 0x76, 0x6d, 0x76, 0x31, 0xa2, 0x02, 0x03, 0x45, 0x45, 0x58, 0xaa,
+	0x02, 0x10, 0x45, 0x74, 0x68, 0x65, 0x72, 0x6d, 0x69, 0x6e, 0x74, 0x2e, 0x45, 0x76, 0x6d, 0x2e,
+	0x56, 0x31, 0xca, 0x02, 0x10, 0x45, 0x74, 0x68, 0x65, 0x72, 0x6d, 0x69, 0x6e, 0x74, 0x5c, 0x45,
+	0x76, 0x6d, 0x5c, 0x56, 0x31, 0xe2, 0x02, 0x1c, 0x45, 0x74, 0x68, 0x65, 0x72, 0x6d, 0x69, 0x6e,
+	0x74, 0x5c, 0x45, 0x76, 0x6d, 0x5c, 0x56, 0x31, 0x5c, 0x47, 0x50, 0x42, 0x4d, 0x65, 0x74, 0x61,
+	0x64, 0x61, 0x74, 0x61, 0xea, 0x02, 0x12, 0x45, 0x74, 0x68, 0x65, 0x72, 0x6d, 0x69, 0x6e, 0x74,
+	0x3a, 0x3a, 0x45, 0x76, 0x6d, 0x3a, 0x3a, 0x56, 0x31, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x33,
 }
 
 var (
@@ -8193,38 +10494,42 @@ func file_ethermint_evm_v1_tx_proto_rawDescGZIP() []byte {
 	return file_ethermint_evm_v1_tx_proto_rawDescData
 }
 
-var file_ethermint_evm_v1_tx_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_ethermint_evm_v1_tx_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_ethermint_evm_v1_tx_proto_goTypes = []interface{}{
 	(*MsgEthereumTx)(nil),              // 0: ethermint.evm.v1.MsgEthereumTx
 	(*LegacyTx)(nil),                   // 1: ethermint.evm.v1.LegacyTx
 	(*AccessListTx)(nil),               // 2: ethermint.evm.v1.AccessListTx
 	(*DynamicFeeTx)(nil),               // 3: ethermint.evm.v1.DynamicFeeTx
 	(*BlobTx)(nil),                     // 4: ethermint.evm.v1.BlobTx
-	(*ExtensionOptionsEthereumTx)(nil), // 5: ethermint.evm.v1.ExtensionOptionsEthereumTx
-	(*MsgEthereumTxResponse)(nil),      // 6: ethermint.evm.v1.MsgEthereumTxResponse
-	(*MsgUpdateParams)(nil),            // 7: ethermint.evm.v1.MsgUpdateParams
-	(*MsgUpdateParamsResponse)(nil),    // 8: ethermint.evm.v1.MsgUpdateParamsResponse
-	(*anypb.Any)(nil),                  // 9: google.protobuf.Any
-	(*AccessTuple)(nil),                // 10: ethermint.evm.v1.AccessTuple
-	(*Log)(nil),                        // 11: ethermint.evm.v1.Log
-	(*Params)(nil),                     // 12: ethermint.evm.v1.Params
+	(*SetCodeAuthorization)(nil),       // 5: ethermint.evm.v1.SetCodeAuthorization
+	(*SetCodeTx)(nil),                  // 6: ethermint.evm.v1.SetCodeTx
+	(*ExtensionOptionsEthereumTx)(nil), // 7: ethermint.evm.v1.ExtensionOptionsEthereumTx
+	(*MsgEthereumTxResponse)(nil),      // 8: ethermint.evm.v1.MsgEthereumTxResponse
+	(*MsgUpdateParams)(nil),            // 9: ethermint.evm.v1.MsgUpdateParams
+	(*MsgUpdateParamsResponse)(nil),    // 10: ethermint.evm.v1.MsgUpdateParamsResponse
+	(*anypb.Any)(nil),                  // 11: google.protobuf.Any
+	(*AccessTuple)(nil),                // 12: ethermint.evm.v1.AccessTuple
+	(*Log)(nil),                        // 13: ethermint.evm.v1.Log
+	(*Params)(nil),                     // 14: ethermint.evm.v1.Params
 }
 var file_ethermint_evm_v1_tx_proto_depIdxs = []int32{
-	9,  // 0: ethermint.evm.v1.MsgEthereumTx.data:type_name -> google.protobuf.Any
-	10, // 1: ethermint.evm.v1.AccessListTx.accesses:type_name -> ethermint.evm.v1.AccessTuple
-	10, // 2: ethermint.evm.v1.DynamicFeeTx.accesses:type_name -> ethermint.evm.v1.AccessTuple
-	10, // 3: ethermint.evm.v1.BlobTx.accesses:type_name -> ethermint.evm.v1.AccessTuple
-	11, // 4: ethermint.evm.v1.MsgEthereumTxResponse.logs:type_name -> ethermint.evm.v1.Log
-	12, // 5: ethermint.evm.v1.MsgUpdateParams.params:type_name -> ethermint.evm.v1.Params
-	0,  // 6: ethermint.evm.v1.Msg.EthereumTx:input_type -> ethermint.evm.v1.MsgEthereumTx
-	7,  // 7: ethermint.evm.v1.Msg.UpdateParams:input_type -> ethermint.evm.v1.MsgUpdateParams
-	6,  // 8: ethermint.evm.v1.Msg.EthereumTx:output_type -> ethermint.evm.v1.MsgEthereumTxResponse
-	8,  // 9: ethermint.evm.v1.Msg.UpdateParams:output_type -> ethermint.evm.v1.MsgUpdateParamsResponse
-	8,  // [8:10] is the sub-list for method output_type
-	6,  // [6:8] is the sub-list for method input_type
-	6,  // [6:6] is the sub-list for extension type_name
-	6,  // [6:6] is the sub-list for extension extendee
-	0,  // [0:6] is the sub-list for field type_name
+	11, // 0: ethermint.evm.v1.MsgEthereumTx.data:type_name -> google.protobuf.Any
+	12, // 1: ethermint.evm.v1.AccessListTx.accesses:type_name -> ethermint.evm.v1.AccessTuple
+	12, // 2: ethermint.evm.v1.DynamicFeeTx.accesses:type_name -> ethermint.evm.v1.AccessTuple
+	12, // 3: ethermint.evm.v1.BlobTx.accesses:type_name -> ethermint.evm.v1.AccessTuple
+	12, // 4: ethermint.evm.v1.SetCodeTx.accesses:type_name -> ethermint.evm.v1.AccessTuple
+	5,  // 5: ethermint.evm.v1.SetCodeTx.auth_list:type_name -> ethermint.evm.v1.SetCodeAuthorization
+	13, // 6: ethermint.evm.v1.MsgEthereumTxResponse.logs:type_name -> ethermint.evm.v1.Log
+	14, // 7: ethermint.evm.v1.MsgUpdateParams.params:type_name -> ethermint.evm.v1.Params
+	0,  // 8: ethermint.evm.v1.Msg.EthereumTx:input_type -> ethermint.evm.v1.MsgEthereumTx
+	9,  // 9: ethermint.evm.v1.Msg.UpdateParams:input_type -> ethermint.evm.v1.MsgUpdateParams
+	8,  // 10: ethermint.evm.v1.Msg.EthereumTx:output_type -> ethermint.evm.v1.MsgEthereumTxResponse
+	10, // 11: ethermint.evm.v1.Msg.UpdateParams:output_type -> ethermint.evm.v1.MsgUpdateParamsResponse
+	10, // [10:12] is the sub-list for method output_type
+	8,  // [8:10] is the sub-list for method input_type
+	8,  // [8:8] is the sub-list for extension type_name
+	8,  // [8:8] is the sub-list for extension extendee
+	0,  // [0:8] is the sub-list for field type_name
 }
 
 func init() { file_ethermint_evm_v1_tx_proto_init() }
@@ -8295,7 +10600,7 @@ func file_ethermint_evm_v1_tx_proto_init() {
 			}
 		}
 		file_ethermint_evm_v1_tx_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ExtensionOptionsEthereumTx); i {
+			switch v := v.(*SetCodeAuthorization); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -8307,7 +10612,7 @@ func file_ethermint_evm_v1_tx_proto_init() {
 			}
 		}
 		file_ethermint_evm_v1_tx_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgEthereumTxResponse); i {
+			switch v := v.(*SetCodeTx); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -8319,7 +10624,7 @@ func file_ethermint_evm_v1_tx_proto_init() {
 			}
 		}
 		file_ethermint_evm_v1_tx_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*MsgUpdateParams); i {
+			switch v := v.(*ExtensionOptionsEthereumTx); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -8331,6 +10636,30 @@ func file_ethermint_evm_v1_tx_proto_init() {
 			}
 		}
 		file_ethermint_evm_v1_tx_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*MsgEthereumTxResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_ethermint_evm_v1_tx_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*MsgUpdateParams); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_ethermint_evm_v1_tx_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*MsgUpdateParamsResponse); i {
 			case 0:
 				return &v.state
@@ -8349,7 +10678,7 @@ func file_ethermint_evm_v1_tx_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_ethermint_evm_v1_tx_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -142,6 +142,11 @@ func (tx *AccessListTx) GetBlobHashes() []common.Hash {
 	return nil
 }
 
+// GetSetCodeAuthorizations returns nil for non-setcode transactions.
+func (tx *AccessListTx) GetSetCodeAuthorizations() []ethtypes.SetCodeAuthorization {
+	return nil
+}
+
 // GetValue returns the tx amount.
 func (tx *AccessListTx) GetValue() *big.Int {
 	if tx.Amount == nil {

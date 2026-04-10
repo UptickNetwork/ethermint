@@ -381,20 +381,21 @@ func (msg MsgEthereumTx) AsMessage(signer ethtypes.Signer, baseFee *big.Int) (co
 		}
 	}
 	ethMsg := core.Message{
-		To:               txData.GetTo(),
-		From:             from,
-		Nonce:            txData.GetNonce(),
-		Value:            txData.GetValue(),
-		GasLimit:         txData.GetGas(),
-		GasPrice:         gasPrice,
-		GasFeeCap:        gasFeeCap,
-		GasTipCap:        gasTipCap,
-		Data:             txData.GetData(),
-		AccessList:       txData.GetAccessList(),
-		BlobGasFeeCap:    txData.GetBlobFeeCap(),
-		BlobHashes:       txData.GetBlobHashes(),
-		SkipNonceChecks:  false,
-		SkipFromEOACheck: false,
+		To:                    txData.GetTo(),
+		From:                  from,
+		Nonce:                 txData.GetNonce(),
+		Value:                 txData.GetValue(),
+		GasLimit:              txData.GetGas(),
+		GasPrice:              gasPrice,
+		GasFeeCap:             gasFeeCap,
+		GasTipCap:             gasTipCap,
+		Data:                  txData.GetData(),
+		AccessList:            txData.GetAccessList(),
+		BlobGasFeeCap:         txData.GetBlobFeeCap(),
+		BlobHashes:            txData.GetBlobHashes(),
+		SetCodeAuthorizations: txData.GetSetCodeAuthorizations(),
+		SkipNonceChecks:       false,
+		SkipFromEOACheck:      false,
 	}
 
 	if msg.FeePayer == "" {
