@@ -446,6 +446,11 @@ func setupTestWithContext(valMinGasPrice string, minGasPrice sdkmath.LegacyDec, 
 	privKey, msg := setupTest(valMinGasPrice + s.denom)
 	params := types.DefaultParams()
 	params.MinGasPrice = minGasPrice
+	params.BaseFee = baseFee
+	// Defer automatic EIP-1559 base-fee updates (BeginBlock) so params.BaseFee
+	// stays at the value we set. Otherwise CalculateBaseFee clamps a decreasing
+	// base fee to MinGasPrice, collapsing the "base fee < min gas price" scenarios.
+	params.EnableHeight = 1_000_000_000
 	s.app.FeeMarketKeeper.SetParams(s.ctx, params)
 	s.app.FeeMarketKeeper.SetBaseFee(s.ctx, baseFee.BigInt())
 	s.Commit()

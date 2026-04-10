@@ -6,6 +6,7 @@ import (
 
 	"cosmossdk.io/math"
 	"github.com/ethereum/go-ethereum/common/hexutil"
+	ethmath "github.com/ethereum/go-ethereum/common/math"
 	ethrpc "github.com/ethereum/go-ethereum/rpc"
 	rpc "github.com/evmos/ethermint/rpc/types"
 	utiltx "github.com/evmos/ethermint/testutil/tx"
@@ -323,7 +324,7 @@ func (suite *BackendTestSuite) TestFeeHistory() {
 	testCases := []struct {
 		name           string
 		registerMock   func(validator sdk.AccAddress)
-		userBlockCount ethrpc.DecimalOrHex
+		userBlockCount ethmath.HexOrDecimal64
 		latestBlock    ethrpc.BlockNumber
 		expFeeHistory  *rpc.FeeHistoryResult
 		validator      sdk.AccAddress

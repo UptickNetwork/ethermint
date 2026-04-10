@@ -72,7 +72,7 @@ func TestChainContextCalcDifficulty(t *testing.T) {
 func TestChainContextFinalize(t *testing.T) {
 	cc := NewChainContext()
 
-	cc.Finalize(nil, nil, nil, nil, nil)
+	cc.Finalize(nil, nil, nil, nil)
 }
 
 func TestChainContextPrepare(t *testing.T) {
@@ -92,15 +92,15 @@ func TestChainContextSeal(t *testing.T) {
 func TestChainContextVerifyHeader(t *testing.T) {
 	cc := NewChainContext()
 
-	err := cc.VerifyHeader(nil, nil, false)
+	err := cc.VerifyHeader(nil, nil)
 	require.Nil(t, err)
 }
 
 func TestChainContextVerifyHeaders(t *testing.T) {
 	cc := NewChainContext()
 
-	ch, err := cc.VerifyHeaders(nil, nil, []bool{false})
-	require.Nil(t, err)
+	ch, errCh := cc.VerifyHeaders(nil, nil)
+	require.Nil(t, errCh)
 	require.Nil(t, ch)
 }
 
