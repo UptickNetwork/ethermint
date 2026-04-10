@@ -18,6 +18,7 @@ package types
 import (
 	"math/big"
 
+	errorsmod "cosmossdk.io/errors"
 	"github.com/ethereum/go-ethereum/common"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 )
@@ -26,6 +27,7 @@ var (
 	_ TxData = &LegacyTx{}
 	_ TxData = &AccessListTx{}
 	_ TxData = &DynamicFeeTx{}
+	_ TxData = &BlobTx{}
 )
 
 // TxData implements the Ethereum transaction tx structure. It is used
@@ -43,6 +45,8 @@ type TxData interface {
 	GetGasPrice() *big.Int
 	GetGasTipCap() *big.Int
 	GetGasFeeCap() *big.Int
+	GetBlobFeeCap() *big.Int
+	GetBlobHashes() []common.Hash
 	GetValue() *big.Int
 	GetTo() *common.Address
 
@@ -68,12 +72,16 @@ func NewTxDataFromTx(tx *ethtypes.Transaction) (TxData, error) {
 	var txData TxData
 	var err error
 	switch tx.Type() {
+	case ethtypes.BlobTxType:
+		txData, err = newBlobTx(tx)
 	case ethtypes.DynamicFeeTxType:
 		txData, err = newDynamicFeeTx(tx)
 	case ethtypes.AccessListTxType:
 		txData, err = newAccessListTx(tx)
-	default:
+	case ethtypes.LegacyTxType:
 		txData, err = newLegacyTx(tx)
+	default:
+		return nil, errorsmod.Wrapf(ErrUnsupportedTxType, "tx type: %d", tx.Type())
 	}
 	if err != nil {
 		return nil, err

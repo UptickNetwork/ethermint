@@ -40,6 +40,8 @@ type TransactionArgs struct {
 	GasPrice             *hexutil.Big    `json:"gasPrice"`
 	MaxFeePerGas         *hexutil.Big    `json:"maxFeePerGas"`
 	MaxPriorityFeePerGas *hexutil.Big    `json:"maxPriorityFeePerGas"`
+	MaxFeePerBlobGas     *hexutil.Big    `json:"maxFeePerBlobGas"`
+	BlobVersionedHashes  []common.Hash   `json:"blobVersionedHashes,omitempty"`
 	Value                *hexutil.Big    `json:"value"`
 	Nonce                *hexutil.Uint64 `json:"nonce"`
 
@@ -112,6 +114,32 @@ func (args *TransactionArgs) ToTransaction() *MsgEthereumTx {
 
 	var data TxData
 	switch {
+	case args.MaxFeePerBlobGas != nil:
+		al := AccessList{}
+		if args.AccessList != nil {
+			al = NewAccessList(args.AccessList)
+		}
+		blobHashes := make([]string, 0, len(args.BlobVersionedHashes))
+		for _, h := range args.BlobVersionedHashes {
+			blobHashes = append(blobHashes, h.Hex())
+		}
+		var blobFeeCap sdkmath.Int
+		if args.MaxFeePerBlobGas != nil {
+			blobFeeCap = sdkmath.NewIntFromBigInt(args.MaxFeePerBlobGas.ToInt())
+		}
+		data = &BlobTx{
+			To:                  to,
+			ChainID:             &chainID,
+			Nonce:               nonce,
+			GasLimit:            gas,
+			GasFeeCap:           &maxFeePerGas,
+			GasTipCap:           &maxPriorityFeePerGas,
+			Amount:              &value,
+			Data:                args.GetData(),
+			Accesses:            al,
+			MaxFeePerBlobGas:    &blobFeeCap,
+			BlobVersionedHashes: blobHashes,
+		}
 	case args.MaxFeePerGas != nil:
 		al := AccessList{}
 		if args.AccessList != nil {
@@ -255,10 +283,19 @@ func (args *TransactionArgs) ToMessage(globalGasCap uint64, baseFee *big.Int) (c
 		GasTipCap:        gasTipCap,
 		Data:             data,
 		AccessList:       accessList,
+		BlobGasFeeCap:    args.bigFromHex(args.MaxFeePerBlobGas),
+		BlobHashes:       args.BlobVersionedHashes,
 		SkipNonceChecks:  true,
 		SkipFromEOACheck: true,
 	}
 	return msg, nil
+}
+
+func (args *TransactionArgs) bigFromHex(v *hexutil.Big) *big.Int {
+	if v == nil {
+		return nil
+	}
+	return v.ToInt()
 }
 
 // GetFrom retrieves the transaction sender address.

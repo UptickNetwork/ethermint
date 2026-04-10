@@ -336,6 +336,29 @@ func (k *Keeper) ApplyMessageWithConfig(ctx sdk.Context,
 	evm := k.NewEVM(ctx, msg, cfg, tracer, stateDB)
 
 	leftoverGas := msg.GasLimit
+	if tracer != nil && tracer.OnTxStart != nil {
+		traceTx := ethtypes.NewTx(&ethtypes.LegacyTx{
+			Nonce:    msg.Nonce,
+			To:       msg.To,
+			Value:    msg.Value,
+			Gas:      msg.GasLimit,
+			GasPrice: msg.GasPrice,
+			Data:     msg.Data,
+		})
+		tracer.OnTxStart(&tracing.VMContext{
+			Coinbase:    cfg.CoinBase,
+			BlockNumber: big.NewInt(ctx.BlockHeight()),
+			Time:        uint64(ctx.BlockTime().Unix()),
+			Random:      nil,
+			GasPrice:    msg.GasPrice,
+			StateDB:     stateDB,
+		}, traceTx, msg.From)
+		defer func() {
+			if tracer.OnTxEnd != nil {
+				tracer.OnTxEnd(&ethtypes.Receipt{GasUsed: msg.GasLimit - leftoverGas}, vmErr)
+			}
+		}()
+	}
 
 	sender := vm.AccountRef(msg.From)
 	contractCreation := msg.To == nil

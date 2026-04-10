@@ -132,6 +132,16 @@ func (tx *AccessListTx) GetGasFeeCap() *big.Int {
 	return tx.GetGasPrice()
 }
 
+// GetBlobFeeCap returns nil for non-blob transactions.
+func (tx *AccessListTx) GetBlobFeeCap() *big.Int {
+	return nil
+}
+
+// GetBlobHashes returns nil for non-blob transactions.
+func (tx *AccessListTx) GetBlobHashes() []common.Hash {
+	return nil
+}
+
 // GetValue returns the tx amount.
 func (tx *AccessListTx) GetValue() *big.Int {
 	if tx.Amount == nil {

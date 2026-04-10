@@ -61,6 +61,7 @@ func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
 	registry.RegisterInterface(
 		"ethermint.evm.v1.TxData",
 		(*TxData)(nil),
+		&BlobTx{},
 		&DynamicFeeTx{},
 		&AccessListTx{},
 		&LegacyTx{},

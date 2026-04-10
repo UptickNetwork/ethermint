@@ -144,6 +144,16 @@ func (tx *DynamicFeeTx) GetGasFeeCap() *big.Int {
 	return tx.GasFeeCap.BigInt()
 }
 
+// GetBlobFeeCap returns nil for non-blob transactions.
+func (tx *DynamicFeeTx) GetBlobFeeCap() *big.Int {
+	return nil
+}
+
+// GetBlobHashes returns nil for non-blob transactions.
+func (tx *DynamicFeeTx) GetBlobHashes() []common.Hash {
+	return nil
+}
+
 // GetValue returns the tx amount.
 func (tx *DynamicFeeTx) GetValue() *big.Int {
 	if tx.Amount == nil {

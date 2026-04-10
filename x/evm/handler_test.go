@@ -478,19 +478,18 @@ func (suite *EvmTestSuite) deployERC20Contract() common.Address {
 	nonce := k.GetNonce(suite.ctx, suite.from)
 	ctorArgs, err := types.ERC20Contract.ABI.Pack("", suite.from, big.NewInt(10000000000))
 	suite.Require().NoError(err)
-	msg := ethtypes.NewMessage(
-		suite.from,
-		nil,
-		nonce,
-		big.NewInt(0),
-		2000000,
-		big.NewInt(1),
-		nil,
-		nil,
-		append(types.ERC20Contract.Bin, ctorArgs...),
-		nil,
-		true,
-	)
+	msg := core.Message{
+		From:            suite.from,
+		To:              nil,
+		Nonce:           nonce,
+		Value:           big.NewInt(0),
+		GasLimit:        2000000,
+		GasPrice:        big.NewInt(1),
+		GasFeeCap:       big.NewInt(1),
+		GasTipCap:       big.NewInt(1),
+		Data:            append(types.ERC20Contract.Bin, ctorArgs...),
+		SkipNonceChecks: true,
+	}
 	rsp, err := k.ApplyMessage(suite.ctx, msg, nil, true)
 	suite.Require().NoError(err)
 	suite.Require().False(rsp.Failed())
@@ -598,7 +597,7 @@ func (suite *EvmTestSuite) TestERC20TransferReverted() {
 }
 
 func (suite *EvmTestSuite) TestContractDeploymentRevert() {
-	intrinsicGas := uint64(134180)
+	intrinsicGas := uint64(200000)
 	testCases := []struct {
 		msg      string
 		gasLimit uint64

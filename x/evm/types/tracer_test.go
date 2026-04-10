@@ -7,5 +7,10 @@ import (
 )
 
 func TestNewNoOpTracer(t *testing.T) {
-	require.Equal(t, &NoOpTracer{}, NewNoOpTracer())
+	hooks := NewNoOpTracer()
+	require.NotNil(t, hooks)
+	require.NotNil(t, hooks.OnOpcode)
+	require.NotNil(t, hooks.OnFault)
+	require.NotNil(t, hooks.OnExit)
+	require.NotNil(t, hooks.OnEnter)
 }

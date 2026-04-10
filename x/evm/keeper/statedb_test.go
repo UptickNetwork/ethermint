@@ -13,6 +13,7 @@ import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/tracing"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/core/vm"
 	"github.com/ethereum/go-ethereum/crypto"
@@ -20,7 +21,15 @@ import (
 	utiltx "github.com/evmos/ethermint/testutil/tx"
 	"github.com/evmos/ethermint/x/evm/statedb"
 	"github.com/evmos/ethermint/x/evm/types"
+	"github.com/holiman/uint256"
 )
+
+func toU256(amount *big.Int) *uint256.Int {
+	if amount == nil {
+		return uint256.NewInt(0)
+	}
+	return uint256.MustFromBig(amount)
+}
 
 func (suite *KeeperTestSuite) TestCreateAccount() {
 	testCases := []struct {
@@ -33,11 +42,11 @@ func (suite *KeeperTestSuite) TestCreateAccount() {
 			"reset account (keep balance)",
 			suite.address,
 			func(vmdb vm.StateDB, addr common.Address) {
-				vmdb.AddBalance(addr, big.NewInt(100))
-				suite.Require().NotZero(vmdb.GetBalance(addr).Int64())
+				vmdb.AddBalance(addr, toU256(big.NewInt(100)), tracing.BalanceChangeUnspecified)
+				suite.Require().NotZero(vmdb.GetBalance(addr).ToBig().Int64())
 			},
 			func(vmdb vm.StateDB, addr common.Address) {
-				suite.Require().Equal(vmdb.GetBalance(addr).Int64(), int64(100))
+				suite.Require().Equal(vmdb.GetBalance(addr).ToBig().Int64(), int64(100))
 			},
 		},
 		{
@@ -78,19 +87,14 @@ func (suite *KeeperTestSuite) TestAddBalance() {
 			big.NewInt(0),
 			true,
 		},
-		{
-			"negative amount",
-			big.NewInt(-1),
-			false, // seems to be consistent with go-ethereum's implementation
-		},
 	}
 
 	for _, tc := range testCases {
 		suite.Run(tc.name, func() {
 			vmdb := suite.StateDB()
-			prev := vmdb.GetBalance(suite.address)
-			vmdb.AddBalance(suite.address, tc.amount)
-			post := vmdb.GetBalance(suite.address)
+			prev := new(big.Int).Set(vmdb.GetBalance(suite.address).ToBig())
+			vmdb.AddBalance(suite.address, toU256(tc.amount), tracing.BalanceChangeUnspecified)
+			post := new(big.Int).Set(vmdb.GetBalance(suite.address).ToBig())
 
 			if tc.isNoOp {
 				suite.Require().Equal(prev.Int64(), post.Int64())
@@ -118,7 +122,7 @@ func (suite *KeeperTestSuite) TestSubBalance() {
 			"positive amount, above zero",
 			big.NewInt(50),
 			func(vmdb vm.StateDB) {
-				vmdb.AddBalance(suite.address, big.NewInt(100))
+				vmdb.AddBalance(suite.address, toU256(big.NewInt(100)), tracing.BalanceChangeUnspecified)
 			},
 			false,
 		},
@@ -128,12 +132,6 @@ func (suite *KeeperTestSuite) TestSubBalance() {
 			func(vm.StateDB) {},
 			true,
 		},
-		{
-			"negative amount",
-			big.NewInt(-1),
-			func(vm.StateDB) {},
-			false,
-		},
 	}
 
 	for _, tc := range testCases {
@@ -141,9 +139,9 @@ func (suite *KeeperTestSuite) TestSubBalance() {
 			vmdb := suite.StateDB()
 			tc.malleate(vmdb)
 
-			prev := vmdb.GetBalance(suite.address)
-			vmdb.SubBalance(suite.address, tc.amount)
-			post := vmdb.GetBalance(suite.address)
+			prev := new(big.Int).Set(vmdb.GetBalance(suite.address).ToBig())
+			vmdb.SubBalance(suite.address, toU256(tc.amount), tracing.BalanceChangeUnspecified)
+			post := new(big.Int).Set(vmdb.GetBalance(suite.address).ToBig())
 
 			if tc.isNoOp {
 				suite.Require().Equal(prev.Int64(), post.Int64())
@@ -510,7 +508,7 @@ func (suite *KeeperTestSuite) TestExist() {
 	}{
 		{"success, account exists", suite.address, func(vm.StateDB) {}, true},
 		{"success, has suicided", suite.address, func(vmdb vm.StateDB) {
-			vmdb.Suicide(suite.address)
+			vmdb.SelfDestruct(suite.address)
 		}, true},
 		{"success, account doesn't exist", utiltx.GenerateAddress(), func(vm.StateDB) {}, false},
 	}
@@ -536,7 +534,9 @@ func (suite *KeeperTestSuite) TestEmpty() {
 		{
 			"not empty, positive balance",
 			suite.address,
-			func(vmdb vm.StateDB) { vmdb.AddBalance(suite.address, big.NewInt(100)) },
+			func(vmdb vm.StateDB) {
+				vmdb.AddBalance(suite.address, toU256(big.NewInt(100)), tracing.BalanceChangeUnspecified)
+			},
 			false,
 		},
 		{"empty, account doesn't exist", utiltx.GenerateAddress(), func(vm.StateDB) {}, true},

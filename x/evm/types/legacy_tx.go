@@ -115,6 +115,16 @@ func (tx *LegacyTx) GetGasFeeCap() *big.Int {
 	return tx.GetGasPrice()
 }
 
+// GetBlobFeeCap returns nil for non-blob transactions.
+func (tx *LegacyTx) GetBlobFeeCap() *big.Int {
+	return nil
+}
+
+// GetBlobHashes returns nil for non-blob transactions.
+func (tx *LegacyTx) GetBlobHashes() []common.Hash {
+	return nil
+}
+
 // GetValue returns the tx amount.
 func (tx *LegacyTx) GetValue() *big.Int {
 	if tx.Amount == nil {

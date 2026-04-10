@@ -391,6 +391,8 @@ func (msg MsgEthereumTx) AsMessage(signer ethtypes.Signer, baseFee *big.Int) (co
 		GasTipCap:        gasTipCap,
 		Data:             txData.GetData(),
 		AccessList:       txData.GetAccessList(),
+		BlobGasFeeCap:    txData.GetBlobFeeCap(),
+		BlobHashes:       txData.GetBlobHashes(),
 		SkipNonceChecks:  false,
 		SkipFromEOACheck: false,
 	}

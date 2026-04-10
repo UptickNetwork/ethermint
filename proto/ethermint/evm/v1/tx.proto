@@ -143,6 +143,47 @@ message DynamicFeeTx {
   bytes s = 12;
 }
 
+// BlobTx is the data of EIP-4844 blob transactions.
+message BlobTx {
+  option (gogoproto.goproto_getters) = false;
+  option (cosmos_proto.implements_interface) = "TxData";
+
+  // chain_id of the destination EVM chain
+  string chain_id = 1 [
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.customname) = "ChainID",
+    (gogoproto.jsontag) = "chainID"
+  ];
+  // nonce corresponds to the account nonce (transaction sequence).
+  uint64 nonce = 2;
+  // gas_tip_cap defines the max value for the gas tip.
+  string gas_tip_cap = 3 [(gogoproto.customtype) = "cosmossdk.io/math.Int"];
+  // gas_fee_cap defines the max value for the gas fee.
+  string gas_fee_cap = 4 [(gogoproto.customtype) = "cosmossdk.io/math.Int"];
+  // gas defines the gas limit defined for the transaction.
+  uint64 gas = 5 [(gogoproto.customname) = "GasLimit"];
+  // to is the recipient address in hex format.
+  string to = 6;
+  // value defines the transaction amount.
+  string value = 7
+      [(gogoproto.customtype) = "cosmossdk.io/math.Int", (gogoproto.customname) = "Amount"];
+  // data is the data payload bytes of the transaction.
+  bytes data = 8;
+  // accesses is an array of access tuples.
+  repeated AccessTuple accesses = 9
+      [(gogoproto.castrepeated) = "AccessList", (gogoproto.jsontag) = "accessList", (gogoproto.nullable) = false];
+  // max_fee_per_blob_gas defines the max fee per blob gas.
+  string max_fee_per_blob_gas = 10 [(gogoproto.customtype) = "cosmossdk.io/math.Int"];
+  // blob_versioned_hashes are the versioned blob hashes (hex).
+  repeated string blob_versioned_hashes = 11 [(gogoproto.jsontag) = "blobVersionedHashes"];
+  // v defines the signature value.
+  bytes v = 12;
+  // r defines the signature value.
+  bytes r = 13;
+  // s defines the signature value.
+  bytes s = 14;
+}
+
 // ExtensionOptionsEthereumTx is an extension option for ethereum transactions
 message ExtensionOptionsEthereumTx {
   option (gogoproto.goproto_getters) = false;

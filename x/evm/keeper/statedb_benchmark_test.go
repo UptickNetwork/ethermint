@@ -8,8 +8,10 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/tracing"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/holiman/uint256"
 )
 
 func BenchmarkCreateAccountNew(b *testing.B) {
@@ -52,7 +54,7 @@ func BenchmarkAddBalance(b *testing.B) {
 	b.ReportAllocs()
 
 	for i := 0; i < b.N; i++ {
-		vmdb.AddBalance(suite.address, amt)
+		vmdb.AddBalance(suite.address, uint256.MustFromBig(amt), tracing.BalanceChangeUnspecified)
 	}
 }
 
@@ -144,7 +146,7 @@ func BenchmarkSubBalance(b *testing.B) {
 	b.ReportAllocs()
 
 	for i := 0; i < b.N; i++ {
-		vmdb.SubBalance(suite.address, amt)
+		vmdb.SubBalance(suite.address, uint256.MustFromBig(amt), tracing.BalanceChangeUnspecified)
 	}
 }
 

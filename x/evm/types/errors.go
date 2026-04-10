@@ -49,6 +49,7 @@ const (
 	codeErrGasOverflow
 	codeErrInvalidAccount
 	codeErrInvalidGasLimit
+	codeErrUnsupportedTxType
 )
 
 var ErrPostTxProcessing = errors.New("failed to execute post processing")
@@ -116,6 +117,9 @@ var (
 
 	// ErrInvalidGasLimit returns an error if gas limit value is invalid
 	ErrInvalidGasLimit = errorsmod.Register(ModuleName, codeErrInvalidGasLimit, "invalid gas limit")
+
+	// ErrUnsupportedTxType returns an error if tx type is not supported by current TxData schema
+	ErrUnsupportedTxType = errorsmod.Register(ModuleName, codeErrUnsupportedTxType, "unsupported ethereum tx type")
 )
 
 // NewExecErrorWithReason unpacks the revert return bytes and returns a wrapped error
