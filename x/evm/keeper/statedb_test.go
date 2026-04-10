@@ -170,7 +170,7 @@ func (suite *KeeperTestSuite) TestGetNonce() {
 			suite.address,
 			1,
 			func(vmdb vm.StateDB) {
-				vmdb.SetNonce(suite.address, 1)
+				vmdb.SetNonce(suite.address, 1, tracing.NonceChangeUnspecified)
 			},
 		},
 	}
@@ -210,7 +210,7 @@ func (suite *KeeperTestSuite) TestSetNonce() {
 	for _, tc := range testCases {
 		suite.Run(tc.name, func() {
 			vmdb := suite.StateDB()
-			vmdb.SetNonce(tc.address, tc.nonce)
+			vmdb.SetNonce(tc.address, tc.nonce, tracing.NonceChangeUnspecified)
 			nonce := vmdb.GetNonce(tc.address)
 			suite.Require().Equal(tc.nonce, nonce)
 		})

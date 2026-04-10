@@ -32,6 +32,7 @@ import (
 func (cc ChainConfig) EthereumConfig(chainID *big.Int) *params.ChainConfig {
 	return &params.ChainConfig{
 		ChainID:                 chainID,
+		BlobScheduleConfig:      blobScheduleForChainConfig(cc),
 		HomesteadBlock:          getBlockValue(cc.HomesteadBlock),
 		DAOForkBlock:            getBlockValue(cc.DAOForkBlock),
 		DAOForkSupport:          cc.DAOForkSupport,
@@ -50,6 +51,7 @@ func (cc ChainConfig) EthereumConfig(chainID *big.Int) *params.ChainConfig {
 		MergeNetsplitBlock:      getBlockValue(cc.MergeNetsplitBlock),
 		ShanghaiTime:            getBlockTimeValue(cc.ShanghaiBlock),
 		CancunTime:              getBlockTimeValue(cc.CancunBlock),
+		PragueTime:              getBlockTimeValue(cc.PragueBlock),
 		TerminalTotalDifficulty: nil,
 		Ethash:                  nil,
 		Clique:                  nil,
@@ -75,6 +77,7 @@ func DefaultChainConfig() ChainConfig {
 	mergeNetsplitBlock := sdkmath.ZeroInt()
 	shanghaiBlock := sdkmath.ZeroInt()
 	cancunBlock := sdkmath.ZeroInt()
+	pragueBlock := sdkmath.ZeroInt()
 
 	return ChainConfig{
 		HomesteadBlock:      &homesteadBlock,
@@ -96,6 +99,7 @@ func DefaultChainConfig() ChainConfig {
 		MergeNetsplitBlock:  &mergeNetsplitBlock,
 		ShanghaiBlock:       &shanghaiBlock,
 		CancunBlock:         &cancunBlock,
+		PragueBlock:         &pragueBlock,
 	}
 }
 
@@ -113,6 +117,24 @@ func getBlockTimeValue(block *sdkmath.Int) *uint64 {
 	}
 	v := block.Uint64()
 	return &v
+}
+
+// blobScheduleForChainConfig supplies go-ethereum v1.16+ blob parameters for each
+// timestamp fork that is enabled. CheckConfigForkOrder requires a schedule entry
+// whenever CancunTime / PragueTime (etc.) are set.
+func blobScheduleForChainConfig(cc ChainConfig) *params.BlobScheduleConfig {
+	var bsc *params.BlobScheduleConfig
+	if getBlockTimeValue(cc.CancunBlock) != nil {
+		bsc = &params.BlobScheduleConfig{}
+		bsc.Cancun = params.DefaultCancunBlobConfig
+	}
+	if getBlockTimeValue(cc.PragueBlock) != nil {
+		if bsc == nil {
+			bsc = &params.BlobScheduleConfig{}
+		}
+		bsc.Prague = params.DefaultPragueBlobConfig
+	}
+	return bsc
 }
 
 // Validate performs a basic validation of the ChainConfig params. The function will return an error
@@ -171,6 +193,9 @@ func (cc ChainConfig) Validate() error {
 	}
 	if err := validateBlock(cc.CancunBlock); err != nil {
 		return errorsmod.Wrap(err, "CancunBlock")
+	}
+	if err := validateBlock(cc.PragueBlock); err != nil {
+		return errorsmod.Wrap(err, "PragueBlock")
 	}
 	// NOTE: chain ID is not needed to check config order
 	if err := cc.EthereumConfig(nil).CheckConfigForkOrder(); err != nil {

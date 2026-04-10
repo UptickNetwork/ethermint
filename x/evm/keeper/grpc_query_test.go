@@ -4,12 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"math/big"
+	"strings"
 
 	"cosmossdk.io/math"
 	sdkmath "cosmossdk.io/math"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/ethereum/go-ethereum/core/tracing"
 	"github.com/ethereum/go-ethereum/core/vm"
 	"github.com/ethereum/go-ethereum/crypto"
 	ethlogger "github.com/ethereum/go-ethereum/eth/tracers/logger"
@@ -781,7 +783,7 @@ func (suite *KeeperTestSuite) TestTraceTx() {
 				predecessors = []*types.MsgEthereumTx{}
 			},
 			expPass:       true,
-			traceResponse: "{\"gas\":34828,\"failed\":false,\"returnValue\":\"0000000000000000000000000000000000000000000000000000000000000001\",\"structLogs\":[{\"pc\":0,\"op\":\"PUSH1\",\"gas\":",
+			traceResponse: "{\"gas\":34828,\"failed\":false,\"returnValue\":\"0x0000000000000000000000000000000000000000000000000000000000000001\",\"structLogs\":[{\"pc\":0,\"op\":\"PUSH1\",",
 		},
 		{
 			msg: "default trace with filtered response",
@@ -794,7 +796,7 @@ func (suite *KeeperTestSuite) TestTraceTx() {
 				predecessors = []*types.MsgEthereumTx{}
 			},
 			expPass:         true,
-			traceResponse:   "{\"gas\":34828,\"failed\":false,\"returnValue\":\"0000000000000000000000000000000000000000000000000000000000000001\",\"structLogs\":[{\"pc\":0,\"op\":\"PUSH1\",\"gas\":",
+			traceResponse:   "{\"gas\":34828,\"failed\":false,\"returnValue\":\"0x0000000000000000000000000000000000000000000000000000000000000001\",\"structLogs\":[{\"pc\":0,\"op\":\"PUSH1\",",
 			enableFeemarket: false,
 		},
 		{
@@ -819,7 +821,7 @@ func (suite *KeeperTestSuite) TestTraceTx() {
 				predecessors = []*types.MsgEthereumTx{}
 			},
 			expPass:         true,
-			traceResponse:   "{\"gas\":34828,\"failed\":false,\"returnValue\":\"0000000000000000000000000000000000000000000000000000000000000001\",\"structLogs\":[{\"pc\":0,\"op\":\"PUSH1\",\"gas\":",
+			traceResponse:   "{\"gas\":34828,\"failed\":false,\"returnValue\":\"0x0000000000000000000000000000000000000000000000000000000000000001\",\"structLogs\":[{\"pc\":0,\"op\":\"PUSH1\",",
 			enableFeemarket: true,
 		},
 		{
@@ -841,7 +843,7 @@ func (suite *KeeperTestSuite) TestTraceTx() {
 
 				// increase nonce to avoid address collision
 				vmdb := suite.StateDB()
-				vmdb.SetNonce(suite.address, vmdb.GetNonce(suite.address)+1)
+				vmdb.SetNonce(suite.address, vmdb.GetNonce(suite.address)+1, tracing.NonceChangeUnspecified)
 				suite.Require().NoError(vmdb.Commit())
 
 				contractAddr := suite.DeployTestContract(suite.T(), suite.address, sdkmath.NewIntWithDecimal(1000, 18).BigInt())
@@ -854,7 +856,7 @@ func (suite *KeeperTestSuite) TestTraceTx() {
 				predecessors = append(predecessors, firstTx)
 			},
 			expPass:         true,
-			traceResponse:   "{\"gas\":34828,\"failed\":false,\"returnValue\":\"0000000000000000000000000000000000000000000000000000000000000001\",\"structLogs\":[{\"pc\":0,\"op\":\"PUSH1\",\"gas\":",
+			traceResponse:   "{\"gas\":34828,\"failed\":false,\"returnValue\":\"0x0000000000000000000000000000000000000000000000000000000000000001\",\"structLogs\":[{\"pc\":0,\"op\":\"PUSH1\",",
 			enableFeemarket: false,
 		},
 		{
@@ -900,7 +902,7 @@ func (suite *KeeperTestSuite) TestTraceTx() {
 
 				// increase nonce to avoid address collision
 				vmdb := suite.StateDB()
-				vmdb.SetNonce(suite.address, vmdb.GetNonce(suite.address)+1)
+				vmdb.SetNonce(suite.address, vmdb.GetNonce(suite.address)+1, tracing.NonceChangeUnspecified)
 				suite.Require().NoError(vmdb.Commit())
 
 				chainID := suite.app.EvmKeeper.ChainID()
@@ -925,7 +927,7 @@ func (suite *KeeperTestSuite) TestTraceTx() {
 				suite.app.EvmKeeper.SetParams(suite.ctx, params)
 			},
 			expPass:       true,
-			traceResponse: "{\"gas\":34828,\"failed\":false,\"returnValue\":\"0000000000000000000000000000000000000000000000000000000000000001\",\"structLogs\":[{\"pc\":0,\"op\":\"PUSH1\",\"gas\":",
+			traceResponse: "{\"gas\":34828,\"failed\":false,\"returnValue\":\"0x0000000000000000000000000000000000000000000000000000000000000001\",\"structLogs\":[{\"pc\":0,\"op\":\"PUSH1\",",
 		},
 		{
 			msg: "invalid chain id",
@@ -964,12 +966,10 @@ func (suite *KeeperTestSuite) TestTraceTx() {
 
 			if tc.expPass {
 				suite.Require().NoError(err)
-				// if data is to big, slice the result
-				if len(res.Data) > 150 {
-					suite.Require().Equal(tc.traceResponse, string(res.Data[:150]))
-				} else {
-					suite.Require().Equal(tc.traceResponse, string(res.Data))
-				}
+				act := string(res.Data)
+				suite.Require().GreaterOrEqual(len(act), len(tc.traceResponse), act)
+				// Match a stable prefix only; full trace JSON varies with geth/EVM and trace config.
+				suite.Require().Truef(strings.HasPrefix(act, tc.traceResponse), "unexpected trace prefix\ngot: %s", truncateStr(act, 400))
 				if traceConfig == nil || traceConfig.Tracer == "" {
 					var result ethlogger.ExecutionResult
 					suite.Require().NoError(json.Unmarshal(res.Data, &result))
@@ -984,6 +984,13 @@ func (suite *KeeperTestSuite) TestTraceTx() {
 	}
 
 	suite.enableFeemarket = false // reset flag
+}
+
+func truncateStr(s string, max int) string {
+	if len(s) <= max {
+		return s
+	}
+	return s[:max] + "..."
 }
 
 func (suite *KeeperTestSuite) TestTraceBlock() {
@@ -1006,7 +1013,7 @@ func (suite *KeeperTestSuite) TestTraceBlock() {
 				traceConfig = nil
 			},
 			expPass:       true,
-			traceResponse: "[{\"result\":{\"gas\":34828,\"failed\":false,\"returnValue\":\"0000000000000000000000000000000000000000000000000000000000000001\",\"structLogs\":[{\"pc\":0,\"op\":\"PU",
+			traceResponse: "[{\"result\":{\"gas\":34828,\"failed\":false,\"returnValue\":\"0x0000000000000000000000000000000000000000000000000000000000000001\",\"structLogs\":[{\"pc\":0,\"op\":\"PUSH1\",",
 		},
 		{
 			msg: "filtered trace",
@@ -1018,7 +1025,7 @@ func (suite *KeeperTestSuite) TestTraceBlock() {
 				}
 			},
 			expPass:       true,
-			traceResponse: "[{\"result\":{\"gas\":34828,\"failed\":false,\"returnValue\":\"0000000000000000000000000000000000000000000000000000000000000001\",\"structLogs\":[{\"pc\":0,\"op\":\"PU",
+			traceResponse: "[{\"result\":{\"gas\":34828,\"failed\":false,\"returnValue\":\"0x0000000000000000000000000000000000000000000000000000000000000001\",\"structLogs\":[{\"pc\":0,\"op\":\"PUSH1\",",
 		},
 		{
 			msg: "javascript tracer",
@@ -1040,7 +1047,7 @@ func (suite *KeeperTestSuite) TestTraceBlock() {
 				}
 			},
 			expPass:         true,
-			traceResponse:   "[{\"result\":{\"gas\":34828,\"failed\":false,\"returnValue\":\"0000000000000000000000000000000000000000000000000000000000000001\",\"structLogs\":[{\"pc\":0,\"op\":\"PU",
+			traceResponse:   "[{\"result\":{\"gas\":34828,\"failed\":false,\"returnValue\":\"0x0000000000000000000000000000000000000000000000000000000000000001\",\"structLogs\":[{\"pc\":0,\"op\":\"PUSH1\",",
 			enableFeemarket: true,
 		},
 		{
@@ -1061,7 +1068,7 @@ func (suite *KeeperTestSuite) TestTraceBlock() {
 
 				// increase nonce to avoid address collision
 				vmdb := suite.StateDB()
-				vmdb.SetNonce(suite.address, vmdb.GetNonce(suite.address)+1)
+				vmdb.SetNonce(suite.address, vmdb.GetNonce(suite.address)+1, tracing.NonceChangeUnspecified)
 				suite.Require().NoError(vmdb.Commit())
 
 				contractAddr := suite.DeployTestContract(suite.T(), suite.address, sdkmath.NewIntWithDecimal(1000, 18).BigInt())
@@ -1074,7 +1081,7 @@ func (suite *KeeperTestSuite) TestTraceBlock() {
 				txs = append([]*types.MsgEthereumTx{}, firstTx, secondTx)
 			},
 			expPass:         true,
-			traceResponse:   "[{\"result\":{\"gas\":34828,\"failed\":false,\"returnValue\":\"0000000000000000000000000000000000000000000000000000000000000001\",\"structLogs\":[{\"pc\":0,\"op\":\"PU",
+			traceResponse:   "[{\"result\":{\"gas\":34828,\"failed\":false,\"returnValue\":\"0x0000000000000000000000000000000000000000000000000000000000000001\",\"structLogs\":[{\"pc\":0,\"op\":\"PUSH1\",",
 			enableFeemarket: false,
 		},
 		{
@@ -1142,12 +1149,9 @@ func (suite *KeeperTestSuite) TestTraceBlock() {
 
 			if tc.expPass {
 				suite.Require().NoError(err)
-				// if data is to big, slice the result
-				if len(res.Data) > 150 {
-					suite.Require().Equal(tc.traceResponse, string(res.Data[:150]))
-				} else {
-					suite.Require().Equal(tc.traceResponse, string(res.Data))
-				}
+				act := string(res.Data)
+				suite.Require().GreaterOrEqual(len(act), len(tc.traceResponse), act)
+				suite.Require().Truef(strings.HasPrefix(act, tc.traceResponse), "unexpected trace prefix\ngot: %s", truncateStr(act, 400))
 			} else {
 				suite.Require().Error(err)
 			}

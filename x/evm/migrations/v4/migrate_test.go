@@ -71,5 +71,30 @@ func TestMigrate(t *testing.T) {
 	require.Equal(t, legacySubspace.ps.EnableCreate, params.EnableCreate)
 	require.Equal(t, legacySubspace.ps.AllowUnprotectedTxs, params.AllowUnprotectedTxs)
 	require.Equal(t, legacySubspace.ps.ExtraEIPs, params.ExtraEIPs.EIPs)
-	require.EqualValues(t, legacySubspace.ps.ChainConfig, params.V4ChainConfig)
+	require.EqualValues(t, chainConfigToV4ChainConfig(legacySubspace.ps.ChainConfig), params.V4ChainConfig)
+}
+
+// V4 proto does not include PragueBlock; compare only fields persisted by the v4 migration.
+func chainConfigToV4ChainConfig(cc types.ChainConfig) v4types.V4ChainConfig {
+	return v4types.V4ChainConfig{
+		HomesteadBlock:      cc.HomesteadBlock,
+		DAOForkBlock:        cc.DAOForkBlock,
+		DAOForkSupport:      cc.DAOForkSupport,
+		EIP150Block:         cc.EIP150Block,
+		EIP150Hash:          cc.EIP150Hash,
+		EIP155Block:         cc.EIP155Block,
+		EIP158Block:         cc.EIP158Block,
+		ByzantiumBlock:      cc.ByzantiumBlock,
+		ConstantinopleBlock: cc.ConstantinopleBlock,
+		PetersburgBlock:     cc.PetersburgBlock,
+		IstanbulBlock:       cc.IstanbulBlock,
+		MuirGlacierBlock:    cc.MuirGlacierBlock,
+		BerlinBlock:         cc.BerlinBlock,
+		LondonBlock:         cc.LondonBlock,
+		ArrowGlacierBlock:   cc.ArrowGlacierBlock,
+		GrayGlacierBlock:    cc.GrayGlacierBlock,
+		MergeNetsplitBlock:  cc.MergeNetsplitBlock,
+		ShanghaiBlock:       cc.ShanghaiBlock,
+		CancunBlock:         cc.CancunBlock,
+	}
 }

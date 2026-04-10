@@ -64,6 +64,7 @@ func (k *Keeper) NewEVM(
 		Time:        uint64(ctx.BlockHeader().Time.Unix()),
 		Difficulty:  big.NewInt(0), // unused. Only required in PoW context
 		BaseFee:     cfg.BaseFee,
+		BlobBaseFee: big.NewInt(0),
 		Random:      nil, // not supported
 	}
 
@@ -190,7 +191,7 @@ func (k *Keeper) ApplyTransaction(ctx sdk.Context, msgEth *types.MsgEthereumTx) 
 	// Compute block bloom filter
 	if len(logs) > 0 {
 		bloom = k.GetBlockBloomTransient(ctx)
-		bloom.Or(bloom, big.NewInt(0).SetBytes(ethtypes.LogsBloom(logs)))
+		bloom.Or(bloom, big.NewInt(0).SetBytes(ethtypes.CreateBloom(&ethtypes.Receipt{Logs: logs}).Bytes()))
 		bloomReceipt = ethtypes.BytesToBloom(bloom.Bytes())
 	}
 
@@ -350,7 +351,7 @@ func (k *Keeper) ApplyMessageWithConfig(ctx sdk.Context,
 			BlockNumber: big.NewInt(ctx.BlockHeight()),
 			Time:        uint64(ctx.BlockTime().Unix()),
 			Random:      nil,
-			GasPrice:    msg.GasPrice,
+			BaseFee:     cfg.BaseFee,
 			StateDB:     stateDB,
 		}, traceTx, msg.From)
 		defer func() {
@@ -360,7 +361,7 @@ func (k *Keeper) ApplyMessageWithConfig(ctx sdk.Context,
 		}()
 	}
 
-	sender := vm.AccountRef(msg.From)
+	sender := msg.From
 	contractCreation := msg.To == nil
 	isLondon := cfg.ChainConfig.IsLondon(evm.Context().BlockNumber)
 
@@ -387,9 +388,9 @@ func (k *Keeper) ApplyMessageWithConfig(ctx sdk.Context,
 		// take over the nonce management from evm:
 		// - reset sender's nonce to msg.Nonce() before calling evm.
 		// - increase sender's nonce by one no matter the result.
-		stateDB.SetNonce(sender.Address(), msg.Nonce)
+		stateDB.SetNonce(sender, msg.Nonce, tracing.NonceChangeContractCreator)
 		ret, _, leftoverGas, vmErr = evm.Create(sender, msg.Data, leftoverGas, toUint256(msg.Value))
-		stateDB.SetNonce(sender.Address(), msg.Nonce+1)
+		stateDB.SetNonce(sender, msg.Nonce+1, tracing.NonceChangeUnspecified)
 	} else {
 		ret, leftoverGas, vmErr = evm.Call(sender, *msg.To, msg.Data, leftoverGas, toUint256(msg.Value))
 	}

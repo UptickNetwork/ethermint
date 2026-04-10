@@ -127,6 +127,12 @@ message ChainConfig {
     (gogoproto.customtype) = "cosmossdk.io/math.Int",
     (gogoproto.moretags) = "yaml:\"cancun_block\""
   ];
+  // prague_block: Prague (Pectra) switch time as unix seconds (nil = no fork, 0 = already on prague).
+  // Wired to go-ethereum params.ChainConfig.PragueTime.
+  string prague_block = 24 [
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.moretags) = "yaml:\"prague_block\""
+  ];
 }
 
 // State represents a single Storage key value pair item.

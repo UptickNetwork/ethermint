@@ -40,7 +40,7 @@ const (
 func NewTracer(tracer string, msg core.Message, cfg *params.ChainConfig, height int64) *tracing.Hooks {
 	// TODO: enable additional log configuration
 	logCfg := &logger.Config{
-		Debug: true,
+		EnableMemory: true,
 	}
 
 	switch tracer {
@@ -49,7 +49,13 @@ func NewTracer(tracer string, msg core.Message, cfg *params.ChainConfig, height 
 		if msg.To == nil {
 			return NewNoOpTracer()
 		}
-		return logger.NewAccessListTracer(msg.AccessList, msg.From, *msg.To, preCompiles).Hooks()
+		exclude := make(map[common.Address]struct{})
+		exclude[msg.From] = struct{}{}
+		exclude[*msg.To] = struct{}{}
+		for _, a := range preCompiles {
+			exclude[a] = struct{}{}
+		}
+		return logger.NewAccessListTracer(msg.AccessList, exclude).Hooks()
 	case TracerJSON:
 		return logger.NewJSONLogger(logCfg, os.Stderr)
 	case TracerMarkdown:

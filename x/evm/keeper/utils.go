@@ -99,7 +99,7 @@ func VerifyFee(
 		accessList = txData.GetAccessList()
 	}
 
-	intrinsicGas, err := core.IntrinsicGas(txData.GetData(), accessList, isContractCreation, homestead, istanbul, isShanghai)
+	intrinsicGas, err := core.IntrinsicGas(txData.GetData(), accessList, nil, isContractCreation, homestead, istanbul, isShanghai)
 	if err != nil {
 		return nil, errorsmod.Wrapf(
 			err,

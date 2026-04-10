@@ -139,6 +139,7 @@ func (suite *KeeperTestSuite) SetupAppWithT(checkTx bool, t require.TestingT, ba
 			evmGenesis.Params.ChainConfig.MergeNetsplitBlock = &maxInt
 			evmGenesis.Params.ChainConfig.ShanghaiBlock = &maxInt
 			evmGenesis.Params.ChainConfig.CancunBlock = &maxInt
+			evmGenesis.Params.ChainConfig.PragueBlock = &maxInt
 			genesis[types.ModuleName] = app.AppCodec().MustMarshalJSON(evmGenesis)
 		}
 

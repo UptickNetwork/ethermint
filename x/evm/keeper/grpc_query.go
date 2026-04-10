@@ -553,11 +553,10 @@ func (k *Keeper) traceTx(
 	}
 
 	logConfig := logger.Config{
-		EnableMemory:     traceConfig.EnableMemory,
+		EnableMemory:     traceConfig.EnableMemory || traceConfig.Debug,
 		DisableStorage:   traceConfig.DisableStorage,
 		DisableStack:     traceConfig.DisableStack,
 		EnableReturnData: traceConfig.EnableReturnData,
-		Debug:            traceConfig.Debug,
 		Limit:            int(traceConfig.Limit),
 		Overrides:        overrides,
 	}

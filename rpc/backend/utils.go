@@ -189,8 +189,8 @@ func (b *Backend) processBlock(
 				continue
 			}
 			tx := ethMsg.AsTransaction()
-			reward := tx.EffectiveGasTipValue(blockBaseFee)
-			if reward == nil {
+			reward, err := tx.EffectiveGasTip(blockBaseFee)
+			if err != nil || reward.Sign() < 0 {
 				reward = big.NewInt(0)
 			}
 			sorter = append(sorter, txGasAndReward{gasUsed: txGasUsed, reward: reward})

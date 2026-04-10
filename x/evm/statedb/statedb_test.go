@@ -124,7 +124,7 @@ func (suite *StateDBTestSuite) TestAccountOverride() {
 
 	// init an EOA account, account overridden only happens on EOA account.
 	db.AddBalance(address, toU256(amount), tracing.BalanceChangeUnspecified)
-	db.SetNonce(address, 1)
+	db.SetNonce(address, 1, tracing.NonceChangeUnspecified)
 
 	// override
 	db.CreateAccount(address)
@@ -141,10 +141,10 @@ func (suite *StateDBTestSuite) TestDBError() {
 		malleate func(vm.StateDB)
 	}{
 		{"set account", func(db vm.StateDB) {
-			db.SetNonce(errAddress, 1)
+			db.SetNonce(errAddress, 1, tracing.NonceChangeUnspecified)
 		}},
 		{"delete account", func(db vm.StateDB) {
-			db.SetNonce(errAddress, 1)
+			db.SetNonce(errAddress, 1, tracing.NonceChangeUnspecified)
 			db.SelfDestruct(errAddress)
 		}},
 	}
@@ -306,7 +306,7 @@ func (suite *StateDBTestSuite) TestRevertSnapshot() {
 			db.SetState(address, v1, v3)
 		}},
 		{"set nonce", func(db vm.StateDB) {
-			db.SetNonce(address, 10)
+			db.SetNonce(address, 10, tracing.NonceChangeUnspecified)
 		}},
 		{"change balance", func(db vm.StateDB) {
 			db.AddBalance(address, toU256(big.NewInt(10)), tracing.BalanceChangeUnspecified)
@@ -345,11 +345,11 @@ func (suite *StateDBTestSuite) TestRevertSnapshot() {
 			{
 				// do some arbitrary changes to the storage
 				db := statedb.New(ctx, keeper, emptyTxConfig)
-				db.SetNonce(address, 1)
+				db.SetNonce(address, 1, tracing.NonceChangeUnspecified)
 				db.AddBalance(address, toU256(big.NewInt(100)), tracing.BalanceChangeUnspecified)
 				db.SetCode(address, []byte("hello world"))
 				db.SetState(address, v1, v2)
-				db.SetNonce(address2, 1)
+				db.SetNonce(address2, 1, tracing.NonceChangeUnspecified)
 				suite.Require().NoError(db.Commit())
 			}
 

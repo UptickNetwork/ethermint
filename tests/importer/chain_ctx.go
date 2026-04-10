@@ -23,6 +23,7 @@ import (
 	ethstate "github.com/ethereum/go-ethereum/core/state"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/core/vm"
+	"github.com/ethereum/go-ethereum/params"
 	ethrpc "github.com/ethereum/go-ethereum/rpc"
 )
 
@@ -70,6 +71,11 @@ func (cc *ChainContext) GetHeader(_ common.Hash, number uint64) *ethtypes.Header
 	}
 
 	return nil
+}
+
+// Config implements core.ChainContext (go-ethereum v1.16+).
+func (cc *ChainContext) Config() *params.ChainConfig {
+	return params.TestChainConfig
 }
 
 // Author implements Ethereum's consensus.Engine interface. It is responsible

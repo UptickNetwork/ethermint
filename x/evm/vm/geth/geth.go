@@ -18,8 +18,8 @@ package geth
 import (
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/core/tracing"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/tra
 	"github.com/ethereum/go-ethereum/core/vm"
 	"github.com/ethereum/go-ethereum/params"
 
@@ -47,9 +47,9 @@ func NewEVM(
 	config vm.Config,
 	_ evm.PrecompiledContracts, // unused
 ) evm.EVM {
-	return &EVM{
-		EVM: vm.NewEVM(blockCtx, txCtx, stateDB, chainConfig, config),
-	}
+	evm := vm.NewEVM(blockCtx, stateDB, chainConfig, config)
+	evm.SetTxContext(txCtx)
+	return &EVM{EVM: evm}
 }
 
 // Context returns the EVM's Block Context
@@ -65,6 +65,12 @@ func (e EVM) TxContext() vm.TxContext {
 // Config returns the configuration options for the EVM.
 func (e EVM) Config() vm.Config {
 	return e.EVM.Config
+}
+
+// Reset rebinds transaction context and state DB for the next message execution.
+func (e *EVM) Reset(txCtx vm.TxContext, statedb vm.StateDB) {
+	e.StateDB = statedb
+	e.SetTxContext(txCtx)
 }
 
 // Precompile returns the precompiled contract associated with the given address

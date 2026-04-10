@@ -443,7 +443,9 @@ var _ = Describe("Feemarket", func() {
 // setupTestWithContext sets up a test chain with an example Cosmos send msg,
 // given a local (validator config) and a global (feemarket param) minGasPrice
 func setupTestWithContext(valMinGasPrice string, minGasPrice sdkmath.LegacyDec, baseFee sdkmath.Int) (*ethsecp256k1.PrivKey, banktypes.MsgSend) {
-	privKey, msg := setupTest(valMinGasPrice + s.denom)
+	// Use DefaultEVMDenom here: s.denom is only set inside SetupApp, but setupTest
+	// builds the min-gas-prices string before SetupApp runs (first Ginkgo spec had s.denom "").
+	privKey, msg := setupTest(valMinGasPrice + evmtypes.DefaultEVMDenom)
 	params := types.DefaultParams()
 	params.MinGasPrice = minGasPrice
 	params.BaseFee = baseFee

@@ -159,7 +159,7 @@ func BenchmarkSetNonce(b *testing.B) {
 	b.ReportAllocs()
 
 	for i := 0; i < b.N; i++ {
-		vmdb.SetNonce(suite.address, 1)
+		vmdb.SetNonce(suite.address, 1, tracing.NonceChangeUnspecified)
 	}
 }
 

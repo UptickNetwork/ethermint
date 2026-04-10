@@ -23,6 +23,7 @@ import (
 	errorsmod "cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/state"
 	"github.com/ethereum/go-ethereum/core/stateless"
 	"github.com/ethereum/go-ethereum/core/tracing"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
@@ -380,6 +381,11 @@ func (s *StateDB) Prepare(_ params.Rules, sender, _ common.Address, dst *common.
 	s.PrepareAccessList(sender, dst, precompiles, list)
 }
 
+// AccessEvents returns verkle/stateless witness access tracking (nil point cache on Ethermint).
+func (s *StateDB) AccessEvents() *state.AccessEvents {
+	return state.NewAccessEvents(s.PointCache())
+}
+
 // PointCache returns a point cache placeholder.
 func (s *StateDB) PointCache() *utils.PointCache {
 	return nil
@@ -401,19 +407,22 @@ func toUint256(v *big.Int) *uint256.Int {
 }
 
 // SetNonce sets the nonce of account.
-func (s *StateDB) SetNonce(addr common.Address, nonce uint64) {
+func (s *StateDB) SetNonce(addr common.Address, nonce uint64, _ tracing.NonceChangeReason) {
 	stateObject := s.getOrNewStateObject(addr)
 	if stateObject != nil {
 		stateObject.SetNonce(nonce)
 	}
 }
 
-// SetCode sets the code of account.
-func (s *StateDB) SetCode(addr common.Address, code []byte) {
+// SetCode sets the code of account and returns the previous bytecode.
+func (s *StateDB) SetCode(addr common.Address, code []byte) []byte {
 	stateObject := s.getOrNewStateObject(addr)
 	if stateObject != nil {
+		prev := common.CopyBytes(stateObject.Code())
 		stateObject.SetCode(crypto.Keccak256Hash(code), code)
+		return prev
 	}
+	return nil
 }
 
 // SetState sets the contract state.

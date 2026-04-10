@@ -19,6 +19,7 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core"
+	"github.com/ethereum/go-ethereum/core/tracing"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/stretchr/testify/require"
@@ -641,7 +642,7 @@ func (suite *EvmTestSuite) TestContractDeploymentRevert() {
 
 			// simulate nonce increment in ante handler
 			db := suite.StateDB()
-			db.SetNonce(suite.from, nonce+1)
+			db.SetNonce(suite.from, nonce+1, tracing.NonceChangeUnspecified)
 			suite.Require().NoError(db.Commit())
 
 			rsp, err := k.EthereumTx(sdk.WrapSDKContext(suite.ctx), tx)
