@@ -39,14 +39,27 @@ import (
 	"github.com/holiman/uint256"
 )
 
+// prevRandaoPlaceholder is a non-nil *common.Hash used when the chain is configured post-merge
+// (MergeNetsplitBlock set). go-ethereum v1.16+ derives params.Rules from
+// chainConfig.Rules(..., blockCtx.Random != nil, ...); Random==nil disables Shanghai/Cancun in
+// Rules even if CancunTime is set. Ethermint does not implement RANDAO; PREVRANDAO reads this
+// all-zero mix digest.
+var prevRandaoPlaceholder = new(common.Hash)
+
+func prevRandaoForVMContext(chainConfig *params.ChainConfig) *common.Hash {
+	if chainConfig != nil && chainConfig.MergeNetsplitBlock != nil {
+		return prevRandaoPlaceholder
+	}
+	return nil
+}
+
 // NewEVM generates a go-ethereum VM from the provided Message fields and the chain parameters
 // (ChainConfig and module Params). It additionally sets the validator operator address as the
 // coinbase address to make it available for the COINBASE opcode, even though there is no
 // beneficiary of the coinbase transaction (since we're not mining).
 //
-// NOTE: the RANDOM opcode is currently not supported since it requires
-// RANDAO implementation. See https://github.com/evmos/ethermint/pull/1520#pullrequestreview-1200504697
-// for more information.
+// NOTE: PREVRANDAO returns a fixed all-zero mix when prevRandaoForVMContext is non-nil; there is
+// no RANDAO beacon in Cosmos. See https://github.com/evmos/ethermint/pull/1520#pullrequestreview-1200504697
 func (k *Keeper) NewEVM(
 	ctx sdk.Context,
 	msg core.Message,
@@ -65,7 +78,7 @@ func (k *Keeper) NewEVM(
 		Difficulty:  big.NewInt(0), // unused. Only required in PoW context
 		BaseFee:     cfg.BaseFee,
 		BlobBaseFee: big.NewInt(0),
-		Random:      nil, // not supported
+		Random:      prevRandaoForVMContext(cfg.ChainConfig),
 	}
 
 	txCtx := core.NewEVMTxContext(&msg)
@@ -350,7 +363,7 @@ func (k *Keeper) ApplyMessageWithConfig(ctx sdk.Context,
 			Coinbase:    cfg.CoinBase,
 			BlockNumber: big.NewInt(ctx.BlockHeight()),
 			Time:        uint64(ctx.BlockTime().Unix()),
-			Random:      nil,
+			Random:      prevRandaoForVMContext(cfg.ChainConfig),
 			BaseFee:     cfg.BaseFee,
 			StateDB:     stateDB,
 		}, traceTx, msg.From)
