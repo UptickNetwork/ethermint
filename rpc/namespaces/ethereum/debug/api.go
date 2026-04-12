@@ -17,7 +17,9 @@ package debug
 
 import (
 	"bytes"
+	"context"
 	"errors"
+	"fmt"
 	"io"
 	"os"
 	"runtime"
@@ -113,6 +115,23 @@ func (a *API) TraceBlockByHash(hash common.Hash, config *evmtypes.TraceConfig) (
 	}
 
 	return a.backend.TraceBlock(rpctypes.BlockNumber(resBlock.Block.Height), config, resBlock)
+}
+
+// TraceCall executes a contract call with optional tracing (debug_traceCall).
+// Signature matches go-ethereum eth/tracers.API.TraceCall for JSON-RPC registration.
+func (a *API) TraceCall(
+	ctx context.Context,
+	args evmtypes.TransactionArgs,
+	blockNrOrHash rpctypes.BlockNumberOrHash,
+	config *evmtypes.TraceConfig,
+) (interface{}, error) {
+	_ = ctx
+	a.logger.Debug("debug_traceCall", "block", fmt.Sprintf("%+v", blockNrOrHash))
+	blockNum, err := a.backend.BlockNumberFromTendermint(blockNrOrHash)
+	if err != nil {
+		return nil, err
+	}
+	return a.backend.TraceCall(args, blockNum, config)
 }
 
 // BlockProfile turns on goroutine profiling for nsec seconds and writes profile data to

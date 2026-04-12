@@ -16,6 +16,7 @@
 package backend
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 
@@ -201,4 +202,52 @@ func (b *Backend) TraceBlock(height rpctypes.BlockNumber,
 	}
 
 	return decodedResults, nil
+}
+
+// TraceCall traces a simulated eth_call (debug_traceCall).
+func (b *Backend) TraceCall(
+	args evmtypes.TransactionArgs,
+	blockNr rpctypes.BlockNumber,
+	config *evmtypes.TraceConfig,
+) (interface{}, error) {
+	bz, err := json.Marshal(&args)
+	if err != nil {
+		return nil, err
+	}
+	header, err := b.TendermintBlockByNumber(blockNr)
+	if err != nil {
+		return nil, errors.New("header not found")
+	}
+
+	req := &evmtypes.QueryTraceCallRequest{
+		Args:            bz,
+		GasCap:          b.RPCGasCap(),
+		ProposerAddress: sdk.ConsAddress(header.Block.ProposerAddress),
+		ChainId:         b.chainID.Int64(),
+		TraceConfig:     config,
+		BlockNumber:     header.Block.Height,
+		BlockHash:       common.Bytes2Hex(header.BlockID.Hash),
+		BlockTime:       header.Block.Time,
+	}
+
+	ctx := rpctypes.ContextWithHeight(blockNr.Int64())
+	timeout := b.RPCEVMTimeout()
+	var cancel context.CancelFunc
+	if timeout > 0 {
+		ctx, cancel = context.WithTimeout(ctx, timeout)
+	} else {
+		ctx, cancel = context.WithCancel(ctx)
+	}
+	defer cancel()
+
+	res, err := b.queryClient.TraceCall(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	var decoded interface{}
+	if err := json.Unmarshal(res.Data, &decoded); err != nil {
+		return nil, err
+	}
+	return decoded, nil
 }

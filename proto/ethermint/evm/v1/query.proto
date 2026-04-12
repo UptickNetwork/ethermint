@@ -69,6 +69,11 @@ service Query {
     option (google.api.http).get = "/ethermint/evm/v1/trace_block";
   }
 
+  // TraceCall implements the `debug_traceCall` rpc api (simulated call execution trace).
+  rpc TraceCall(QueryTraceCallRequest) returns (QueryTraceCallResponse) {
+    option (google.api.http).get = "/ethermint/evm/v1/trace_call";
+  }
+
   // BaseFee queries the base fee of the parent block of the current block,
   // it's similar to feemarket module's method, but also checks london hardfork status.
   rpc BaseFee(QueryBaseFeeRequest) returns (QueryBaseFeeResponse) {
@@ -283,6 +288,32 @@ message QueryTraceBlockRequest {
 
 // QueryTraceBlockResponse defines TraceBlock response
 message QueryTraceBlockResponse {
+  // data is the response serialized in bytes
+  bytes data = 1;
+}
+
+// QueryTraceCallRequest defines TraceCall request (debug_traceCall / eth_call + trace).
+message QueryTraceCallRequest {
+  // args uses the same json format as eth_call
+  bytes args = 1;
+  // gas_cap defines the default gas cap to be used
+  uint64 gas_cap = 2;
+  // proposer_address of the requested block
+  bytes proposer_address = 3 [(gogoproto.casttype) = "github.com/cosmos/cosmos-sdk/types.ConsAddress"];
+  // chain_id is the eip155 chain id parsed from the requested block header
+  int64 chain_id = 4;
+  // trace_config holds extra parameters to trace functions.
+  TraceConfig trace_config = 5;
+  // block_number for the execution context (state at end of parent of this height)
+  int64 block_number = 6;
+  // block_hash (hex) of the requested block
+  string block_hash = 7;
+  // block_time of the requested block
+  google.protobuf.Timestamp block_time = 8 [(gogoproto.nullable) = false, (gogoproto.stdtime) = true];
+}
+
+// QueryTraceCallResponse defines TraceCall response
+message QueryTraceCallResponse {
   // data is the response serialized in bytes
   bytes data = 1;
 }
