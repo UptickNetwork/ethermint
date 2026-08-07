@@ -200,6 +200,17 @@ func (s *StateDB) GetCommittedState(addr common.Address, hash common.Hash) commo
 	return common.Hash{}
 }
 
+// GetStateAndCommittedState returns both the dirty state and the committed state.
+// This method was added to go-ethereum's StateDB interface in v1.16.x and is
+// required by cosmos/go-ethereum v1.16.2-cosmos-1.
+func (s *StateDB) GetStateAndCommittedState(addr common.Address, hash common.Hash) (common.Hash, common.Hash) {
+	stateObject := s.getStateObject(addr)
+	if stateObject != nil {
+		return stateObject.GetState(hash), stateObject.GetCommittedState(hash)
+	}
+	return common.Hash{}, common.Hash{}
+}
+
 // GetRefund returns the current value of the refund counter.
 func (s *StateDB) GetRefund() uint64 {
 	return s.refund
