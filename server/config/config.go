@@ -26,7 +26,6 @@ import (
 	"github.com/cometbft/cometbft/libs/strings"
 
 	errorsmod "cosmossdk.io/errors"
-	"cosmossdk.io/tools/rosetta"
 	"github.com/cosmos/cosmos-sdk/server/config"
 	errortypes "github.com/cosmos/cosmos-sdk/types/errors"
 )
@@ -155,10 +154,16 @@ type TLSConfig struct {
 }
 
 // RosettaConfig defines configuration for the Rosetta server.
+// Note: rosetta.Config dependency removed for SDK 0.53 compatibility.
 type RosettaConfig struct {
-	rosetta.Config
 	// Enable defines if the Rosetta server should be enabled.
 	Enable bool `mapstructure:"enable"`
+	// Denom defines the denomination displayed to the user in the rosetta UI.
+	Denom string `mapstructure:"denom"`
+	// GasToSuggestFactor defines the factor for suggesting gas estimate.
+	GasToSuggestFactor float64 `mapstructure:"gas-to-suggest-factor"`
+	// Offline defines if the server should run in offline mode.
+	Offline bool `mapstructure:"offline"`
 }
 
 // AppConfig helps to override default appConfig template and configs.
