@@ -211,6 +211,17 @@ func (s *StateDB) GetStateAndCommittedState(addr common.Address, hash common.Has
 	return common.Hash{}, common.Hash{}
 }
 
+// IsStorageEmpty returns true if the account has no storage set.
+// This method was added to go-ethereum's StateDB interface in v1.16.x and is
+// required by cosmos/go-ethereum v1.16.2-cosmos-1.
+func (s *StateDB) IsStorageEmpty(addr common.Address) bool {
+	stateObject := s.getStateObject(addr)
+	if stateObject != nil {
+		return len(stateObject.originStorage) == 0
+	}
+	return true
+}
+
 // GetRefund returns the current value of the refund counter.
 func (s *StateDB) GetRefund() uint64 {
 	return s.refund
